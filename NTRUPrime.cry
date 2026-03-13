@@ -1,1 +1,18 @@
-#Group 9 Streamlined variant NTRU Prime Cryptol
+// Group 9 Streamlined variant NTRU Prime Cryptol
+
+/*
+ * Parameters
+ * p: 761 - ring
+ * q: 4591 - Modulus
+ * w: 286 - weight
+ * tau: ? - rounding parameter
+ */
+
+ p : Integer
+ p = 761
+
+ q : Integer
+ q = 4591
+
+ w : Integer
+ w = 286
