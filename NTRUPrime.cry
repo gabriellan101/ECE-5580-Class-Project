@@ -1,5 +1,7 @@
 // Group 9 Streamlined variant NTRU Prime Cryptol
 
+module NTRUPrime where
+
 /*
  * Parameters
  * p: 761 - ring
@@ -8,11 +10,22 @@
  * tau: ? - rounding parameter
  */
 
- p : Integer
- p = 761
+type p = 761
+type q = 4591
+type w = 286
 
- q : Integer
- q = 4591
+type Zq = [13]
+type Poly = [p]Zq
 
- w : Integer
- w = 286
+// Mod Arithmetic
+
+
+// Poly utils
+
+
+// Poly weight
+
+
+// Poly addition
+
+
