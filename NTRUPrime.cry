@@ -52,11 +52,20 @@ polyAdd : Poly -> Poly -> Poly // takes 2 poly inputs for one poly output
 polyAdd a b =
     [modq (a@i + b@i) | i <- [0 .. p-1]]
 
+// Poly. Subtraction
 polySub : Poly -> Poly -> Poly
 polySub a b =
     [modq (a@i - b@i) | i <- [0 .. p-1]]
 
-// tests - block comment out later
+// Poly. Multiplication
+polyMul : Poly -> Poly -> Poly
+polyMul a b = undefined
+
+// Polynomial Inverse
+polyInv : Poly -> Poly
+polyInv f = undefined
+
+// tests - block comment out later VERIFIED
 /*
 testA : Poly
 testA = 
@@ -72,6 +81,19 @@ testB =
      else if i == 2 then 4
      else 0 | i <- [0 .. p-1]]
 */
+
+//////////////////////
+// Key Generation
+//////////////////////
+type PublicKey = Poly
+type SecretKey = Poly
+
+keyGen : Poly -> Poly -> (PublicKey, SecretKey)
+keyGen f g = 
+    (h, f)
+    where
+        finv = polyInv f
+        h = polyMul g finv
 
 
 
