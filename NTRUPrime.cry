@@ -14,16 +14,66 @@ type p = 761
 q = 4591
 type w = 286
 
+// Coefficient Ring Zq
 type Zq = [13]
+
+modq : Zq -> Zq  //modulus operator
+modq z = z % q
+
+// Polynomial Ring - represented as vectors of length p
 type Poly = [p]Zq
 
-// Mod Arithmetic
-modq : Zq -> Zq
-modq x = x % q
-
+/////////////////
 // Poly utils
+/////////////////
+
+// null value polynomial ring
 zeroPoly : Poly
 zeroPoly = [0 | i <- [0 .. p-1]]
+
+// polynomial of the form a_0(input) x^0 + 0x^1 + 0x^2 + ... + 0x^760
+// modq c because q is maximum value of coeff.
+constPoly : Zq -> Poly
+constPoly c = 
+    [if i == 0 then modq c else 0 | i <- [0 .. p-1]]
+
+// monomial of the form a_c * x^k
+// input poly degree, then coeff
+monomial : Integer -> Zq -> Poly
+monomial k c = 
+    [if i == k then modq c else 0 | i <- [0 .. p-1]]
+
+// Polynomial x
+x : Poly
+x = monomial 1 1
+
+// Polynomial addition
+polyAdd : Poly -> Poly -> Poly // takes 2 poly inputs for one poly output
+polyAdd a b =
+    [modq (a@i + b@i) | i <- [0 .. p-1]]
+
+polySub : Poly -> Poly -> Poly
+polySub a b =
+    [modq (a@i - b@i) | i <- [0 .. p-1]]
+
+// tests - block comment out later
+/*
+testA : Poly
+testA = 
+    [if i == 0 then 1
+     else if i == 1 then 2
+     else if i == 2 then 3
+     else 0 | i <- [0 .. p-1]]
+
+testB : Poly
+testB = 
+    [if i == 0 then 4
+     else if i == 1 then 4
+     else if i == 2 then 4
+     else 0 | i <- [0 .. p-1]]
+*/
+
+
 
 // Poly weight
 
