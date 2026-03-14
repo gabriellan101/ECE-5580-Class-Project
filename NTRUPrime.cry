@@ -106,3 +106,7 @@ keyGen f g =
 // Poly addition
 
 
+// Encrypt 
+encrypt : Poly -> Poly 
+encrypt msg = 
+// function 
