@@ -11,17 +11,19 @@ module NTRUPrime where
  */
 
 type p = 761
-type q = 4591
+q = 4591
 type w = 286
 
 type Zq = [13]
 type Poly = [p]Zq
 
 // Mod Arithmetic
-
+modq : Zq -> Zq
+modq x = x % q
 
 // Poly utils
-
+zeroPoly : Poly
+zeroPoly = [0 | i <- [0 .. p-1]]
 
 // Poly weight
 
