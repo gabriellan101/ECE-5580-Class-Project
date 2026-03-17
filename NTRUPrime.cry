@@ -55,8 +55,10 @@ x = monomial 1 1
 // Polynomial Functions
 ///////////////////////
 
-
-
+// Polynomial multiplied by scalar
+polyScale : Zq -> Poly -> Poly
+polyScale c a = 
+    [modq (c * a@i) |i <- [0 .. p-1]]
 
 
 // Polynomial addition
@@ -84,16 +86,17 @@ polyMul a b = c where
     wrap2 = wrap + (wrap >> 1)
     c = [prod@i + wrap2@i | i<-[0..p-1]]
 
+// Poly Inverse helper Functions
+ringPoly : Poly // Ring polynomial for x^p - x - 1
+ringPoly = 
+    [if i == 1 then q-1
+     else if i == 0 then q-1
+     else if i == 760 then q-1 //might comment out this line if we find multiplication handles x^p
+     else 0 | i <- [0 .. p-1]]
+
 // Polynomial Inverse
-polyInv : Poly -> Poly
-polyInv f = undefined
-
-
-//////////////////////
-// Random Number Gen.
-//////////////////////
-
-
+polyInvModQ : Poly -> Poly
+polyInvModQ f = f // placeholder
 
 
 //////////////////////
@@ -106,7 +109,7 @@ keyGen : Poly -> Poly -> (PublicKey, SecretKey)
 keyGen f g = 
     (h, f)
     where
-        finv = polyInv f
+        finv = polyInvModQ f
         h = polyMul g finv
 
 
