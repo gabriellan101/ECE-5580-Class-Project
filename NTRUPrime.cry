@@ -69,9 +69,20 @@ polySub : Poly -> Poly -> Poly
 polySub a b =
     [modq (a@i - b@i) | i <- [0 .. p-1]]
 
-// Poly. Multiplication
+type DoublePoly = [2*p]Zq
+multPoly : DoublePoly -> DoublePoly -> DoublePoly
+multPoly a b = sum [[a@x * b@y | x<-[0..p*2-1]] >> y | y<-[0..2*p-1]]
+
 polyMul : Poly -> Poly -> Poly
-polyMul a b = undefined
+polyMul a b = c where
+    fa = a # (zero : Poly)
+    fb = b # (zero : Poly)
+    prod = multPoly fa fb
+
+    wrap = [prod @ i | i<-[p..(2*p-1)]] # (zero : Poly)
+
+    wrap2 = wrap + (wrap >> 1)
+    c = [prod@i + wrap2@i | i<-[0..p-1]]
 
 // Polynomial Inverse
 polyInv : Poly -> Poly
@@ -108,5 +119,5 @@ keyGen f g =
 
 // Encrypt 
 encrypt : Poly -> Poly 
-encrypt msg = 
+encrypt msg = undefined
 // function 
