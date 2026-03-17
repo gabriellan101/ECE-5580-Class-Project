@@ -87,17 +87,49 @@ polyMul a b = c where
     c = [prod@i + wrap2@i | i<-[0..p-1]]
 
 // Poly Inverse helper Functions
-ringPoly : Poly // Ring polynomial for x^p - x - 1
+ringPoly : Poly // Ring polynomial for x^p - x - 1 (mod q)
 ringPoly = 
     [if i == 1 then q-1
      else if i == 0 then q-1
-     else if i == 760 then q-1 //might comment out this line if we find multiplication handles x^p
+     else if i == 760 then 1
      else 0 | i <- [0 .. p-1]]
 
 // Polynomial Inverse
-polyInvModQ : Poly -> Poly
-polyInvModQ f = f // placeholder
+/* 
+"almost inverse" style used in actual sntrup761 implementation.
+Based on iterative shift/subtract instead of extended Euclidean algorithms.
+*/
+polyInv : Poly -> Poly
+polyInv f = result where
+    
+    // Initialize variables
+    f0 = f
+    g0 = ringPoly
+    v0 = zeroPoly
+    r0 = onePoly
+    d0 = 1 // d for delta, not degree
 
+    // 2*p iterations for main loop
+    (f_end, g_end, v_end, r_end, d_end) = loop (2*p) step (f0, g0, v0, r0, d0)
+
+    // last step
+    scale = invModQ (f_end @ 0)
+    result = polyScale scale v_end
+
+    // loop body
+    step (f,g,v,r,d) = 
+        if f@0 == 0 then
+        // f divisible by x
+            (shiftR f, g, shiftL v, r, d+1)
+        else
+            if d > 0 then
+            // case 2 swap roles
+                (g, f, r, v, -d)
+            else
+            // case 3 elim const term
+                let f' = polySub f g
+                    v' = polySub v r
+                in (shiftR f', g, shiftLv', r, d+1)
 
 //////////////////////
 // Key Generation
@@ -109,7 +141,7 @@ keyGen : Poly -> Poly -> (PublicKey, SecretKey)
 keyGen f g = 
     (h, f)
     where
-        finv = polyInvModQ f
+        finv = polyInv f
         h = polyMul g finv
 
 
