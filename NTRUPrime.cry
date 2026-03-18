@@ -113,10 +113,8 @@ invModQ a = result where
     result = modq x
 
 // trying to do a loop, crytol doesn't like it
-loop : {n} (fin n) => n -> (a -> a) -> a -> a
-loop n f x = loop where
-    loop = if n == 0 then x else
-        (n-1) f (f x)
+loop : {n, a} (fin n) => n -> (a -> a) -> a -> a
+loop n f x = if n == 0 then x else loop (n-1) f (f x)
 
 // shiftR and shiftL - needed for "almost inverse" style poly inverse, untested
 shiftR : Poly -> Poly
