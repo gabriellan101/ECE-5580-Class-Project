@@ -13,7 +13,7 @@ module NTRUPrime where
 type p = 761
 q = 4591
 type w = 286
-type s = 3
+s = 3
 
 // Coefficient Ring Zq
 type Zq = [13]
@@ -22,8 +22,8 @@ type Zs = [2]
 modq : Zq -> Zq  //modulus operator
 modq z = z % q
 
-mods : Zs -> Zs // modulus operator for small polys
-mods z = z % s
+modS : Zs -> Zs // modulus operator for small polys
+modS z = z % s
 
 // Polynomial Ring - represented as vectors of length p
 type Poly = [p]Zq
@@ -100,6 +100,19 @@ ringPoly =
      else if i == 760 then 1
      else 0 | i <- [0 .. p-1]]
 
+// extendedGCD - needed for invModQ, untested
+extendedGCD : Zq -> Zq -> (Zq, Zq, Zq)
+extendedGCD a b = (g, y, x - (a / b) * y) where
+    (g, x, y) = extendedGCD b (a % b)
+
+
+// invModQ - needed for final scaling step of poly inverse, untested
+invModQ : Zq -> Zq
+invModQ a = result where
+    (g, x, y) = extendedGCD a q
+    result = modq x
+
+
 // Polynomial Inverse
 /* 
 "almost inverse" style used in actual sntrup761 implementation.
@@ -117,7 +130,7 @@ polyInv f = result where
     d0 = 1 // d for delta, not degree
 
     // 2*p iterations for main loop
-    (f_end, g_end, v_end, r_end, d_end) = loop (2*p) step (f0, g0, v0, r0, d0)
+    (f_end, g_end, v_end, r_end, d_end) = loop (2*`p) step (f0, g0, v0, r0, d0)
 
     // last step
     scale = invModQ (f_end @ 0)
@@ -134,9 +147,10 @@ polyInv f = result where
                 (g, f, r, v, -d)
             else
             // case 3 elim const term
-                let f' = polySub f g // error here, unexpected "let". Don't exactly know how to fix
+                (shiftR f', g, shiftL v', r, d+1)
+                where
+                    f' = polySub f g
                     v' = polySub v r
-                in (shiftR f', g, shiftLv', r, d+1)
 
 //////////////////////
 // Key Generation
@@ -151,9 +165,16 @@ keyGen f g =
         finv = polyInv f
         h = polyMul g finv
 
+// randomSmall
+randomSmall : PolySmall
+randomSmall = undefined
+
+zeroExtend : Zs -> Zq
+zeroExtend x = modq x
+
 // Encrypt -UNTESTED, KEY GENERATION POLYINV NOT FUNCTIONAL
 encrypt : Poly -> PolySmall -> Poly 
-encrypt h, msg = c where
+encrypt h msg = c where
     r = randomSmall // add randomness from external source
 
     mLift : Poly
@@ -175,4 +196,4 @@ decrypt f c = msg where
     centered : Poly
     centered = centerLift a
 
-    msg = [mods (centered@i) | i <- [0 .. p-1]] // reduce to small polynomial form
+    msg = [modS (centered@i) | i <- [0 .. p-1]] // reduce to small polynomial form
