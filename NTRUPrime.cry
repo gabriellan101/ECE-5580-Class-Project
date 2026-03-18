@@ -7,21 +7,27 @@ module NTRUPrime where
  * p: 761 - ring
  * q: 4591 - Modulus
  * w: 286 - weight
- * tau: ? - rounding parameter
+ * s: 3 - small poly modulus
  */
 
 type p = 761
 q = 4591
 type w = 286
+type s = 3
 
 // Coefficient Ring Zq
 type Zq = [13]
+type Zs = [2]
 
 modq : Zq -> Zq  //modulus operator
 modq z = z % q
 
+mods : Zs -> Zs // modulus operator for small polys
+mods z = z % s
+
 // Polynomial Ring - represented as vectors of length p
 type Poly = [p]Zq
+type PolySmall = [p]Zs // small polynomials with coefficients in {-1,0,1}
 
 /////////////////
 // Poly utils
@@ -144,15 +150,28 @@ keyGen f g =
         finv = polyInv f
         h = polyMul g finv
 
+// Encrypt -UNTESTED, KEY GENERATION POLYINV NOT FUNCTIONAL
+encrypt : Poly -> PolySmall -> Poly 
+encrypt h, msg = c where
+    r = randomSmall // add randomness from external source
+
+    mLift : Poly
+    mLift = [(zeroExtend msg@i) | i <- [0 .. p-1]] // zero extend message to large polynomial form
+
+    c = polyAdd (polyMul r h) mLift // encryption mechanism
 
 
-// Poly weight
+//centerLift - needed for correctness of decryption, centers coefficients around 0 instead of q/2
+centerLift : Poly -> Poly
+centerLift aS = [if x > q/2 then x - q else x | x <- aS]
 
+// Decrypt
+decrypt : Poly -> Poly -> PolySmall
+decrypt f c = msg where
+    a = polyMul f c
 
-// Poly addition
+    // need to center coefficients around 0 for correct decryption
+    centered : Poly
+    centered = centerLift a
 
-
-// Encrypt 
-encrypt : Poly -> Poly 
-encrypt msg = undefined
-// function 
+    msg = [mods (centered@i) | i <- [0 .. p-1]] // reduce to small polynomial form
