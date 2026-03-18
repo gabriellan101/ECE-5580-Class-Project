@@ -112,6 +112,26 @@ invModQ a = result where
     (g, x, y) = extendedGCD a q
     result = modq x
 
+// trying to do a loop, crytol doesn't like it
+loop : {n} (fin n) => n -> (a -> a) -> a -> a
+loop n f x = loop where
+    loop = if n == 0 then x else
+        (n-1) f (f x)
+
+// shiftR and shiftL - needed for "almost inverse" style poly inverse, untested
+shiftR : Poly -> Poly
+shiftR f = 
+    [if i == 0 then f@1 
+     else if i == 1 then modq (f@2 + f@0) 
+     else if i == 760 then modq (f@0 + f@759)
+     else f@(i+1) | i <- [0 .. p-1]]
+
+shiftL : Poly -> Poly
+shiftL f = 
+    [if i == 0 then modq (f@0 + f@760) 
+     else if i == 759 then modq (f@759 + f@0) 
+     else if i == 760 then f@759
+     else f@(i-1) | i <- [0 .. p-1]]
 
 // Polynomial Inverse
 /* 
