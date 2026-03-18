@@ -104,6 +104,7 @@ ringPoly =
 /* 
 "almost inverse" style used in actual sntrup761 implementation.
 Based on iterative shift/subtract instead of extended Euclidean algorithms.
+Untested wizardry, error on line with "let" keyword. Cannot verify as cryptol is ragebait with gatekept documentation
 */
 polyInv : Poly -> Poly
 polyInv f = result where
@@ -133,7 +134,7 @@ polyInv f = result where
                 (g, f, r, v, -d)
             else
             // case 3 elim const term
-                let f' = polySub f g
+                let f' = polySub f g // error here, unexpected "let". Don't exactly know how to fix
                     v' = polySub v r
                 in (shiftR f', g, shiftLv', r, d+1)
 
@@ -165,7 +166,7 @@ encrypt h, msg = c where
 centerLift : Poly -> Poly
 centerLift aS = [if x > q/2 then x - q else x | x <- aS]
 
-// Decrypt
+// Decrypt - following mathematical description of decryption, untested due to nonfunctional key generation
 decrypt : Poly -> Poly -> PolySmall
 decrypt f c = msg where
     a = polyMul f c
