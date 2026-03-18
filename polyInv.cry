@@ -1,0 +1,82 @@
+module PolyInv where
+
+import Types
+import PolyArith
+import PolyUtils
+// Poly Inverse helper Functions
+ringPoly : Poly // Ring polynomial for x^p - x - 1 (mod q)
+ringPoly = 
+    [if i == 1 then q-1
+     else if i == 0 then q-1
+     else if i == 760 then 1
+     else 0 | i <- [0 .. p-1]]
+
+// extendedGCD - needed for invModQ, untested
+extendedGCD : Zq -> Zq -> (Zq, Zq, Zq)
+extendedGCD a b = (g, y, x - (a / b) * y) where
+    (g, x, y) = extendedGCD b (a % b)
+
+
+// invModQ - needed for final scaling step of poly inverse, untested
+invModQ : Zq -> Zq
+invModQ a = result where
+    (g, x, y) = extendedGCD a q
+    result = modq x
+
+// trying to do a loop, crytol doesn't like it
+loop : {n, a} (fin n) => n -> (a -> a) -> a -> a
+loop n f x = if n == 0 then x else loop (n-1) f (f x)
+
+// shiftR and shiftL - needed for "almost inverse" style poly inverse, untested
+shiftR : Poly -> Poly
+shiftR f = 
+    [if i == 0 then f@1 
+     else if i == 1 then modq (f@2 + f@0) 
+     else if i == 760 then modq (f@0 + f@759)
+     else f@(i+1) | i <- [0 .. p-1]]
+
+shiftL : Poly -> Poly
+shiftL f = 
+    [if i == 0 then modq (f@0 + f@760) 
+     else if i == 759 then modq (f@759 + f@0) 
+     else if i == 760 then f@759
+     else f@(i-1) | i <- [0 .. p-1]]
+
+// Polynomial Inverse
+/* 
+"almost inverse" style used in actual sntrup761 implementation.
+Based on iterative shift/subtract instead of extended Euclidean algorithms.
+Untested wizardry, error on line with "let" keyword. Cannot verify as cryptol is ragebait with gatekept documentation
+*/
+polyInv : Poly -> Poly
+polyInv f = result where
+    
+    // Initialize variables
+    f0 = f
+    g0 = ringPoly
+    v0 = zeroPoly
+    r0 = onePoly
+    d0 = 1 // d for delta, not degree
+
+    // 2*p iterations for main loop
+    (f_end, g_end, v_end, r_end, d_end) = loop (2*`p) step (f0, g0, v0, r0, d0)
+
+    // last step
+    scale = invModQ (f_end @ 0)
+    result = polyScale scale v_end
+
+    // loop body
+    step (f,g,v,r,d) = 
+        if f@0 == 0 then
+        // f divisible by x
+            (shiftR f, g, shiftL v, r, d+1)
+        else
+            if d > 0 then
+            // case 2 swap roles
+                (g, f, r, v, -d)
+            else
+            // case 3 elim const term
+                (shiftR f', g, shiftL v', r, d+1)
+                where
+                    f' = polySub f g
+                    v' = polySub v r

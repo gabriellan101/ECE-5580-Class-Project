@@ -1,0 +1,7 @@
+module TestStuff where
+
+import PolyMult
+
+
+addTest : Integer
+addTest = `(n)

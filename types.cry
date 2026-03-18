@@ -1,0 +1,16 @@
+module Types where
+
+type p = 761
+q = 4591
+type w = 286
+s = 3
+
+type Poly = [p]Zq
+type PolySmall = [p]Zs // small polynomials with coefficients in {-1,0,1}
+
+type DoublePoly = [2*p]Zq
+
+type Zq = [13]
+type Zs = [2]
+
+

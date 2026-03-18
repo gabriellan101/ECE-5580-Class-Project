@@ -1,0 +1,26 @@
+module PolyUtils where
+
+import Types
+import PolyArith
+zeroPoly : Poly
+zeroPoly = [0 | i <- [0 .. p-1]]
+
+// number 1 in polynomial form
+onePoly : Poly
+onePoly = [if i == 0 then 1 else 0 | i <- [0 .. p-1]]
+
+// polynomial of the form a_0(input) x^0 + 0x^1 + 0x^2 + ... + 0x^760
+// modq c because q is maximum value of coeff.
+constPoly : Zq -> Poly
+constPoly c = 
+    [if i == 0 then modq c else 0 | i <- [0 .. p-1]]
+
+// monomial of the form a_c * x^k
+// input poly degree, then coeff
+monomial : Integer -> Zq -> Poly
+monomial k c = 
+    [if i == k then modq c else 0 | i <- [0 .. p-1]]
+
+polyScale : Zq -> Poly -> Poly
+polyScale c a = 
+    [modq (c * a@i) |i <- [0 .. p-1]]

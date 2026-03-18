@@ -1,0 +1,24 @@
+
+// Polynomial addition
+
+module PolyArith where
+
+import Types
+
+
+modq : Zq -> Zq  //modulus operator
+modq z = z % q
+
+modS : Zs -> Zs // modulus operator for small polys
+modS z = z % s
+
+
+polyAdd : Poly -> Poly -> Poly // takes 2 poly inputs for one poly output
+polyAdd a b =
+    [modq (a@i + b@i) | i <- [0 .. p-1]]
+
+// Poly. Subtraction
+polySub : Poly -> Poly -> Poly
+polySub a b =
+    [modq (a@i - b@i) | i <- [0 .. p-1]]
+
