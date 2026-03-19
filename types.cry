@@ -5,12 +5,11 @@ q = 4591
 type w = 286
 s = 3
 
-type Poly = [p]Zq
-type PolySmall = [p]Zs // small polynomials with coefficients in {-1,0,1}
+type Poly = [p]Zq // small polynomials with coefficients in {-1,0,1} are handled manually
 
 type DoublePoly = [2*p]Zq
 
 type Zq = [13]
-type Zs = [2]
 
+type msgBits = [1522] // 1522 bits can be encoded in 761 coefficients of a polynomial with coefficients in {0,1} (binary encoding)
 

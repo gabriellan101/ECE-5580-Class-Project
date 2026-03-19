@@ -1,3 +1,11 @@
+/*
+This module is based off the "almost inverse" style polynomial inverse used in the actual sntrup761 implementation,
+which is based on iterative shift/subtract instead of extended Euclidean algorithms.
+Polynomial version of Stein's binary GDC algorithm. This has been replaced by hardcoded values to test the rest of the implementation.
+
+The issue here is in the loop function.
+*/
+
 module PolyInv where
 
 import Types

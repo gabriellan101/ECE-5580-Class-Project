@@ -14,7 +14,8 @@ import Types
 import PolyArith
 import PolyMult
 import PolyUtils
-import PolyInv
+// comment out until fix
+//import PolyInv 
 // null value polynomial ring
 
 // Polynomial x
@@ -25,7 +26,8 @@ x = monomial 1 1
 // Polynomial Functions
 ///////////////////////
 
-
+polyInvTemp : Poly -> Poly
+polyInvTemp f = undefined
 
 
 //////////////////////
@@ -38,23 +40,49 @@ keyGen : Poly -> Poly -> (PublicKey, SecretKey)
 keyGen f g = 
     (h, f)
     where
-        finv = polyInv f
+        finv = polyInvTemp f
         h = polyMul g finv
 
-// randomSmall
-randomSmall : PolySmall
+// randomSmall - coefficients in {-1,0,1} for small polynomial generation, add randomness from external source
+randomSmall : Poly
 randomSmall = undefined
 
-zeroExtend : Zs -> Zq
-zeroExtend x = modq x
+/*
+Decoding original message into polynomial form and encoding back into bits to recover message
+Message form should be bitstring
+*/
+
+decodeCoeff : [2] -> Zq
+decodeCoeff b = 
+    if b == 0b00 then 0
+    else if b == 0b01 then 1
+    else if b == 0b10 then -1
+    else 0 // default case, should be avoided if able to figure this out
+
+encodeCoeff : Zq -> [2]
+encodeCoeff z = 
+    if z == 0 then 0b00
+    else if z == 1 then 0b01
+    else if z == (q - 1) then 0b10
+    else 0b00 // default case, should be avoided if able to figure this out
+
+encodeMsg : msgBits -> Poly
+encodeMsg bits = 
+    [decodeCoeff (bits @@ [2*i, 2*i+1]) | i <- [0 .. p-1]]
+
+decodeMsg : Poly -> msgBits
+decodeMsg poly = 
+    join [encodeCoeff (poly @ i) | i <- [0 .. p-1]]
 
 // Encrypt -UNTESTED, KEY GENERATION POLYINV NOT FUNCTIONAL
-encrypt : Poly -> PolySmall -> Poly 
-encrypt h msg = c where
+encrypt : Poly -> msgBits -> Poly
+encrypt h m = c where
     r = randomSmall // add randomness from external source
 
+    msg = encodeMsg m
+
     mLift : Poly
-    mLift = [(zeroExtend msg@i) | i <- [0 .. p-1]] // zero extend message to large polynomial form
+    mLift = [modq (msg@i) | i <- [0 .. p-1]] // zero extend message to large polynomial form by using modq
 
     c = polyAdd (polyMul r h) mLift // encryption mechanism
 
@@ -64,7 +92,7 @@ centerLift : Poly -> Poly
 centerLift aS = [if x > q/2 then x - q else x | x <- aS]
 
 // Decrypt - following mathematical description of decryption, untested due to nonfunctional key generation
-decrypt : Poly -> Poly -> PolySmall
+decrypt : Poly -> Poly -> msgBits
 decrypt f c = msg where
     a = polyMul f c
 
@@ -72,4 +100,6 @@ decrypt f c = msg where
     centered : Poly
     centered = centerLift a
 
-    msg = [modS (centered@i) | i <- [0 .. p-1]] // reduce to small polynomial form
+    msgPoly = [modS (centered@i) | i <- [0 .. p-1]] // reduce to small polynomial form
+
+    msg = decodeMsg msgPoly

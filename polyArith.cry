@@ -9,8 +9,10 @@ import Types
 modq : Zq -> Zq  //modulus operator
 modq z = z % q
 
-modS : Zs -> Zs // modulus operator for small polys
+modS : Zq -> Zq // modulus operator for small polys
 modS z = z % s
+
+
 
 
 polyAdd : Poly -> Poly -> Poly // takes 2 poly inputs for one poly output
