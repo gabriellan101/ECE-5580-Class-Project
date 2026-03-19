@@ -14,9 +14,11 @@ import Types
 import PolyArith
 import PolyMult
 import PolyUtils
+
 // comment out until fix
 //import PolyInv 
-// null value polynomial ring
+
+
 
 // Polynomial x
 x : Poly
@@ -26,9 +28,11 @@ x = monomial 1 1
 // Polynomial Functions
 ///////////////////////
 
-polyInvTemp : Poly -> Poly
-polyInvTemp f = undefined
+polyInvQTemp : Poly -> Poly
+polyInvQTemp finvQ = undefined
 
+polyInvSTemp : Poly -> Poly
+polyInvSTemp finvS = undefined
 
 //////////////////////
 // Key Generation
@@ -40,12 +44,19 @@ keyGen : Poly -> Poly -> (PublicKey, SecretKey)
 keyGen f g = 
     (h, f)
     where
-        finv = polyInvTemp f
-        h = polyMul g finv
+        finvS = polyInvSTemp f
+        h = polyMul g finvS
 
 // randomSmall - coefficients in {-1,0,1} for small polynomial generation, add randomness from external source
-randomSmall : Poly
-randomSmall = undefined
+// "random" where 0, 1, -1 are equally likely, using seed to generate deterministic randomness for testing purposes
+// inverse is computed externally for testing purposes since polyInv is not functional
+randomSmall : Zq -> Poly
+randomSmall seed = 
+    [if ((seed + i) % 3) == 0 then 0
+    else if ((seed + i) % 3) == 1 then 1
+    else (q - 1) // -1 mod q
+    
+    | i <- [0 .. p-1]]
 
 /*
 Decoding original message into polynomial form and encoding back into bits to recover message
@@ -77,7 +88,7 @@ decodeMsg poly =
 // Encrypt -UNTESTED, KEY GENERATION POLYINV NOT FUNCTIONAL
 encrypt : Poly -> msgBits -> Poly
 encrypt h m = c where
-    r = randomSmall // add randomness from external source
+    r = randomSmall 23 // add randomness from external source
 
     msg = encodeMsg m
 

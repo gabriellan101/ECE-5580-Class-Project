@@ -24,3 +24,12 @@ monomial k c =
 polyScale : Zq -> Poly -> Poly
 polyScale c a = 
     [modq (c * a@i) |i <- [0 .. p-1]]
+
+
+// f and finv for key generation. Defined here for hardcoded values for key generation since 
+// polynomial inverse is not currently functional. Will be used for testing key generation and encryption/decryption.
+fPoly : Poly
+fPoly = undefined
+
+finvPoly : Poly
+finvPoly = undefined
