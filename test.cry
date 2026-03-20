@@ -1,18 +1,33 @@
 module TestStuff where
 
 import PolyMult
-import NTRUPrime
 import polyInv
 import polyUtils
+import Types
+
+randomSmall : Zq -> Poly
+randomSmall seed = 
+    [if ((seed + i) % 3) == 0 then 0
+    else if ((seed + i) % 3) == 1 then 1
+    else (q - 1) // -1 mod q
+    
+    | i <- [0 .. p-1]]
 
 invTest : Bit
-invTest = prod == onePoly
+invTest = isXPower prod
     where
         f = randomSmall 42
         finv = polyInv f
         prod = polyMul f finv
     
+isXPower : Poly -> Bit
+isXPower p = (count1 == (1:[32])) && allOneOrZero
+    where
+        count1     = foldl (\acc c -> if c == 1 then acc+1 else acc) (0:[32]) p
+        allOneOrZero = all (\c -> (c == 0) || (c == 1)) p
 
+quickTest : Bit
+quickTest = polyInv (randomSmall 42) == zeroPoly
 
 //addTest : Integer
 //addTest = `(n)
