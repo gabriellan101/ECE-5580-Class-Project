@@ -2,24 +2,28 @@
 // Polynomial addition
 
 module PolyArith where
-
+//get types
 import Types
 
-
+//Performs the modulo z operation
 modq : Zq -> Zq  //modulus operator
 modq z = z % q
 
+//Performs the modulo s operation
 modS : Zq -> Zq // modulus operator for small polys
 modS z = z % s
 
 
 
-
+//element wise addition of two polynomials
 polyAdd : Poly -> Poly -> Poly // takes 2 poly inputs for one poly output
 polyAdd a b =
     [modq (a@i + b@i) | i <- [0 .. p-1]]
 
-// Poly. Subtraction
+
+/*
+* Element-wise subtraction of two polynomials
+*/
 polySub : Poly -> Poly -> Poly
 polySub a b =
     [modq (a@i - b@i) | i <- [0 .. p-1]]
