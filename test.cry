@@ -26,8 +26,17 @@ isXPower p = (count1 == (1:[32])) && allOneOrZero
         count1     = foldl (\acc c -> if c == 1 then acc+1 else acc) (0:[32]) p
         allOneOrZero = all (\c -> (c == 0) || (c == 1)) p
 
-quickTest : Bit
-quickTest = polyInv (randomSmall 42) == zeroPoly
+quickTest : (Poly, Poly, Poly)
+quickTest = (f, finv, result) where
+    f = randomSmall 42
+    finv = polyInv f
+    result = polyMul f finv
+
+multTest : (Poly, Poly, Poly)
+multTest = (a, b, c) where
+    a = monomial 4 2
+    b = monomial 5 3
+    c = polyMul a b
 
 //addTest : Integer
 //addTest = `(n)

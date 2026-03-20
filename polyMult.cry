@@ -1,23 +1,29 @@
 module PolyMult where
 import Types
+import PolyArith
 
 /*
 * Takes two polynomials of size 2p and multiplies them
 * Assumes that index p through 2p are zero, if any value in that range is non-zero
 * then result will not be correct
 */
+/*
 multPoly : DoublePoly -> DoublePoly -> DoublePoly
-multPoly a b = sum [[a@x * b@y | x<-[0..p*2-1]] >> y | y<-[0..2*p-1]]
+multPoly a b = sum [[(zext (a@x) * zext (b@y)) | x <- [0..p*2-1]] >> y | y <- [0..2*p-1]]
+*/
 
+multPoly : [2*p][32] -> [2*p][32] -> [2*p][32]
+multPoly a b = sum [[(a@x * b@y) | x <- [0..p*2-1]] >> y | y <- [0..2*p-1]]
 
 /*
 * Takes two p size polynomials and multiplies them via convolution
 */
+/*
 polyMul : Poly -> Poly -> Poly
 polyMul a b = c where
     //zero fill input polynomials for multPoly function
-    fa = a # (zero : Poly)
-    fb = b # (zero : Poly)
+    fa = [zext c | c <- a] # (zero : [p][26])
+    fb = [zext c | c <- b] # (zero : [p][26])
 
     //calculate product
     prod = multPoly fa fb
@@ -26,4 +32,17 @@ polyMul a b = c where
     wrap = [prod @ i | i<-[p..(2*p-1)]] # (zero : Poly)
     wrap2 = wrap + (wrap >> 1)
 
-    c = [prod@i + wrap2@i | i<-[0..p-1]]
+    c = [modq (prod@i + wrap2@i) | i<-[0..p-1]]
+    */
+
+polyMul : Poly -> Poly -> Poly
+polyMul a b = c where
+    fa = [zext x | x <- a] # (zero : [p][32])
+    fb = [zext x | x <- b] # (zero : [p][32])
+
+    prod = multPoly fa fb
+
+    wrap  = [prod@i | i <- [p..(2*p-1)]] # (zero : [p][32])
+    wrap2 = wrap + (wrap >> 1)
+
+    c = [drop ((prod@i + wrap2@i) % 4591) | i <- [0..p-1]]

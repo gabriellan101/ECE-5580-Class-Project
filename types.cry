@@ -1,14 +1,14 @@
 module Types where
 
-//type p = 761
-type p = 8
+type p = 761
+//type p = 8 // smaller p for testing purposes, change back to 761 for final implementation
 q = 4591
 type w = 286
 s = 3
 
 type Poly = [p]Zq // small polynomials with coefficients in {-1,0,1} are handled manually
 
-type DoublePoly = [2*p]Zq
+type DoublePoly = [2*p][2*13]Zq // for intermediate steps in polynomial multiplication, size 2p and coefficients mod q
 
 type Zq = [13]
 
