@@ -6,11 +6,11 @@ Polynomial version of Stein's binary GDC algorithm. This has been replaced by ha
 The issue here is in the loop function.
 */
 
-module PolyInv where
+module polyInv where
 
 import Types
 import PolyArith
-import PolyUtils
+import polyUtils
 // Poly Inverse helper Functions
 ringPoly : Poly // Ring polynomial for x^p - x - 1 (mod q)
 ringPoly = 
@@ -32,8 +32,8 @@ invModQ a = result where
     result = modq x
 
 // trying to do a loop, crytol doesn't like it
-loop : {n, a} (fin n) => n -> (a -> a) -> a -> a
-loop n f x = if n == 0 then x else loop (n-1) f (f x)
+loop : {n, a} (fin n) => (a -> a) -> a -> a
+loop f x = foldl (\acc _ -> f acc) x (zero : [n][1])
 
 // shiftR and shiftL - needed for "almost inverse" style poly inverse, untested
 shiftR : Poly -> Poly
@@ -54,7 +54,7 @@ shiftL f =
 /* 
 "almost inverse" style used in actual sntrup761 implementation.
 Based on iterative shift/subtract instead of extended Euclidean algorithms.
-Untested wizardry, error on line with "let" keyword. Cannot verify as cryptol is ragebait with gatekept documentation
+
 */
 polyInv : Poly -> Poly
 polyInv f = result where
@@ -67,7 +67,7 @@ polyInv f = result where
     d0 = 1 // d for delta, not degree
 
     // 2*p iterations for main loop
-    (f_end, g_end, v_end, r_end, d_end) = loop (2*`p) step (f0, g0, v0, r0, d0)
+    (f_end, g_end, v_end, r_end, d_end) = loop`{1522} step (f0, g0, v0, r0, d0)
 
     // last step
     scale = invModQ (f_end @ 0)

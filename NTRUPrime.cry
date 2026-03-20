@@ -13,10 +13,10 @@ module NTRUPrime where
 import Types
 import PolyArith
 import PolyMult
-import PolyUtils
+import polyUtils
 
 // comment out until fix
-//import PolyInv 
+import polyInv
 
 
 

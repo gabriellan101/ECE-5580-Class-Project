@@ -1,4 +1,4 @@
-module PolyUtils where
+module polyUtils where
 
 import Types
 import PolyArith

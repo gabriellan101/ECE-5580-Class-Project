@@ -1,7 +1,18 @@
 module TestStuff where
 
 import PolyMult
+import NTRUPrime
+import polyInv
+import polyUtils
+
+invTest : Bit
+invTest = prod == onePoly
+    where
+        f = randomSmall 42
+        finv = polyInv f
+        prod = polyMul f finv
+    
 
 
-addTest : Integer
-addTest = `(n)
+//addTest : Integer
+//addTest = `(n)
