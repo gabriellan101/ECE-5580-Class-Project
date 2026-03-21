@@ -18,7 +18,7 @@ modS z = z % s
 //element wise addition of two polynomials
 polyAdd : Poly -> Poly -> Poly // takes 2 poly inputs for one poly output
 polyAdd a b =
-    [modq (a@i + b@i) | i <- [0 .. p-1]]
+    [drop`{13} ((zext (a@i) + zext (b@i)) % 4591) | i <- [0..p-1]]
 
 
 /*
@@ -26,5 +26,5 @@ polyAdd a b =
 */
 polySub : Poly -> Poly -> Poly
 polySub a b =
-    [modq (a@i - b@i) | i <- [0 .. p-1]]
+    [drop`{13} (((zext (a@i) : [26]) + (4591 - (zext (b@i) : [26]))) % 4591) | i <- [0..p-1]]
 

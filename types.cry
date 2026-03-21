@@ -7,6 +7,7 @@ type w = 286
 s = 3
 
 type Poly = [p]Zq // small polynomials with coefficients in {-1,0,1} are handled manually
+type PolyExt = [p+1]Zq // for extended polynomials used in inversion, size p+1 to handle wraparound
 
 type DoublePoly = [2*p][2*13]Zq // for intermediate steps in polynomial multiplication, size 2p and coefficients mod q
 

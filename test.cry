@@ -4,6 +4,8 @@ import PolyMult
 import polyInv
 import polyUtils
 import Types
+import NTRUPrime
+import PolyArith
 
 randomSmall : Zq -> Poly
 randomSmall seed = 
@@ -13,10 +15,12 @@ randomSmall seed =
     
     | i <- [0 .. p-1]]
 
+
+
 invTest : Bit
 invTest = isXPower prod
     where
-        f = randomSmall 42
+        f = onePoly
         finv = polyInv f
         prod = polyMul f finv
     
@@ -28,7 +32,7 @@ isXPower p = (count1 == (1:[32])) && allOneOrZero
 
 quickTest : (Poly, Poly, Poly)
 quickTest = (f, finv, result) where
-    f = randomSmall 42
+    f = testPoly
     finv = polyInv f
     result = polyMul f finv
 
@@ -38,5 +42,34 @@ multTest = (a, b, c) where
     b = monomial 5 3
     c = polyMul a b
 
+testPoly : Poly
+testPoly = [i | i <- [0..p-1]]
+
+testPolyExt : PolyExt
+testPolyExt = [i | i <- [0..p]]
+
+shiftLExtTest : PolyExt
+shiftLExtTest = shiftRExt testPolyExt where
+    allOnesPolyExt = [1 | i <- [0..p]]
+
+shiftLTest : Poly
+shiftLTest = shiftL onePoly
+
+/*
+debugPolyInv : (Poly, Poly, Poly, Poly, Integer)
+debugPolyInv = loop`{1522} step (onePoly, ringPoly, zeroPoly, onePoly, 0)
+  where
+    step (f,g,v,r,d) = 
+        if f@0 == 0 then
+            (shiftR f, g, shiftL v, r, d+1)
+        else
+            if d > 0 then
+                (g, f, r, v, -d)
+            else
+                (shiftR f', g, shiftL v', r, d+1)
+                where
+                    f' = polySub f g
+                    v' = polySub v r
+*/
 //addTest : Integer
 //addTest = `(n)

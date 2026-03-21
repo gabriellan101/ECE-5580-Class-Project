@@ -5,6 +5,9 @@ import PolyArith
 zeroPoly : Poly
 zeroPoly = [0 | i <- [0 .. p-1]]
 
+allOnesPoly : Poly
+allOnesPoly = [1 | i <- [0 .. p-1]]
+
 // number 1 in polynomial form
 onePoly : Poly
 onePoly = [if i == 0 then 1 else 0 | i <- [0 .. p-1]]
