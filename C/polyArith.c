@@ -1,5 +1,4 @@
 #include "polyArith.h"
-#include "Types.h"
 
 static int R3_inv(F3 *out, const F3 *in)
 {
