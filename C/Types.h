@@ -6,7 +6,7 @@
 #define P 761
 #define Q 4591
 #define W 286
-#define q12 ((Q-1)/2)
+#define adj ((Q-1)/2)
 
 typedef int16_t Fq;
 
@@ -17,9 +17,9 @@ void F3_random_weightw(F3 *f);
 
 void Fq_random(Fq *f);
 
-// reduction from int32 to int16 or int8 modq or 3 respectively
+// reductions from int32 to int16 or int8 modq or 3 respectively
 static inline int16_t Fq_freeze(int32_t x) {
-    return int32_mod_uint14(x+q12,Q)-q12;
+    return int32_mod_uint14(x+adj,Q)-adj;
 }
 
 static inline int8_t F3_freeze(int32_t x) {
