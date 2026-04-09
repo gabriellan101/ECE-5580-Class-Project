@@ -22,6 +22,6 @@ If the inverse exists, the output is 0, and if it does not exist, the output is 
 This is done to avoid branching in the code, which can be a source of side-channel attacks.
 */
 static int R3_inv(F3 *out,const F3 *in);
-static int Rq_inv(Fq *out,const Fq *in);
+static int Rq3_inv(Fq *out,const F3 *in);
 
 #endif

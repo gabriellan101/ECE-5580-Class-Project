@@ -49,7 +49,7 @@ static int R3_inv(F3 *out, const F3 *in)
 
 // returns 0 if succeeded, else -1
 // output is 1/(3*in)
-static int Rq_inv(Fq *out, const Fq *in)
+static int Rq3_inv(Fq *out, const F3 *in)
 {
     Fq f[P+1],g[P+1],v[P+1],r[P+1];
     int i,loop,delta;
