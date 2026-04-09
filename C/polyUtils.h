@@ -20,5 +20,6 @@ static void RqtoR3(F3 *out,const Fq *in);
 
 
 
+#include "polyUtils.c"
 
 #endif

@@ -14,3 +14,9 @@ static Fq Fq_recip(Fq x) {
     }
     return result;
 }
+
+static void RqtoR3(F3 *out, const Fq *in) {
+    for (int i = 0; i < P; i++) {
+        out[i] = F3_freeze(in[i]);
+    }
+}

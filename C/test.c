@@ -1,21 +1,19 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include "Types.h"
+#include "polyUtils.h"
+//#include "polyArith.h"
 
 #define Q 4591
 #define adj ((Q-1)/2)
 
-// testing definitions for individual files
+// testing definitions for individual files - comment out which aren't being tested
 #define POLYUTILS
 
 typedef int16_t Fq;
 
 #ifdef POLYUTILS
-static inline Fq Fq_freeze(int32_t x) {
-    int32_t r = (x + adj) % Q;
-    if (r < 0) r += Q;
-    return (Fq)(r - adj);
-}
 
 // Original O(Q) implementation
 static Fq Fq_recip_original(Fq a1) {
@@ -28,19 +26,12 @@ static Fq Fq_recip_original(Fq a1) {
     return ai;
 }
 
-// New square-and-multiply implementation
-static Fq Fq_recip_fast(Fq a1) {
-    int32_t result = 1;
-    int32_t base = a1;
-    int exp = Q - 2;
-    while (exp > 0) {
-        if (exp & 1)
-            result = Fq_freeze(base * result);
-        base = Fq_freeze(base * base);
-        exp >>= 1;
-    }
-    return result;
-}
+#endif
+
+#ifdef POLYARITHTEST
+
+
+
 #endif
 
 
@@ -53,7 +44,7 @@ int main() {
         if (a == 0) continue;
 
         Fq orig = Fq_recip_original((Fq)a);
-        Fq fast = Fq_recip_fast((Fq)a);
+        Fq fast = Fq_recip((Fq)a);
 
         // Check both implementations agree
         if (orig != fast) {

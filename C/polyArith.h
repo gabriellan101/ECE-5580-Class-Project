@@ -2,6 +2,7 @@
 #define POLYARITH_H
 
 #include "Types.h"
+#include "polyUtils.h"
 
 /*
 A difference between cryptol and C is the necessity of defining a discrete add and subtract function for polynomials.
@@ -24,4 +25,6 @@ This is done to avoid branching in the code, which can be a source of side-chann
 static int R3_inv(F3 *out,const F3 *in);
 static int Rq3_inv(Fq *out,const F3 *in);
 
+
+#include "polyArith.c"
 #endif
