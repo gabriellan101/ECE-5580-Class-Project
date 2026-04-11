@@ -27,4 +27,5 @@ static int Rq3_inv(Fq *out,const F3 *in);
 
 
 #include "polyArith.c"
+
 #endif

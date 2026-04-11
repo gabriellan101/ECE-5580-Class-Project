@@ -10,6 +10,7 @@
 
 // testing definitions for individual files - comment out which aren't being tested
 #define POLYUTILS
+#define POLYARITHTEST
 
 typedef int16_t Fq;
 
@@ -64,11 +65,14 @@ int main() {
         passed++;
     }
 
-    printf("\npolyUtils.c Results: %d passed, %d failed\n", passed, failed);
+    printf("\npolyUtils.c Fq_recip() Results: %d passed, %d failed\n", passed, failed);
     return failed > 0 ? 1 : 0;
     
     #endif
 
+    #ifdef POLYARITHTEST
+
+    #endif
 
 }
 
