@@ -2,7 +2,7 @@
 
 
 // returns 0 if succeeded, else -1
-// 
+// in implementation, polynomials are repeatedly generated until one is found that is invertible
 static int R3_inv(F3 *out, const F3 *in)
 {
     F3 f[P+1],g[P+1],v[P+1],r[P+1];
@@ -95,3 +95,26 @@ static int Rq3_inv(Fq *out, const F3 *in)
     return int16_nonzero_mask(delta);
 }
 
+static void Fq_add(Fq *h,const Fq *f,const Fq *g, int F_scale, int G_scale, int index_adj) {
+    for (int i = 0; i < (P + index_adj); i++) {
+        h[i] = Fq_mod((int32_t)f[i] * F_scale + g[i] * G_scale);
+    }
+}
+
+static void Fq_sub(Fq *h,const Fq *f,const Fq *g, int F_scale, int G_scale, int index_adj) {
+    for (int i = 0; i < (P + index_adj); i++) {
+        h[i] = Fq_mod((int32_t)f[i] * F_scale - g[i] * G_scale);
+    }
+}
+
+static void F3_add(F3 *h,const F3 *f,const F3 *g, int F_scale, int G_scale, int index_adj) {
+    for (int i = 0; i < (P + index_adj); i++) {
+        h[i] = F3_mod((int32_t)f[i] * F_scale + g[i] * G_scale);
+    }
+}
+
+static void F3_sub(F3 *h,const F3 *f,const F3 *g, int F_scale, int G_scale, int index_adj) {
+    for (int i = 0; i < (P + index_adj); i++) {
+        h[i] = F3_mod((int32_t)f[i] * F_scale - g[i] * G_scale);
+    }
+}
