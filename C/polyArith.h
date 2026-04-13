@@ -3,6 +3,7 @@
 
 #include "Types.h"
 #include "polyUtils.h"
+#include "polyMult.h"
 
 /*
 A difference between cryptol and C is the necessity of defining a discrete add and subtract function for polynomials.
