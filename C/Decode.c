@@ -56,3 +56,92 @@ void Decode(uint16_t *out,const unsigned char *S,const uint16_t *M,long long len
       *out++ = R2[i/2];
   }
 }
+
+
+
+void Decode(uint16_t *out, const unsigned char *in, const uint16_t *M, long long len)
+{
+    /* Temporary working buffers */
+    uint16_t R[2][len];
+    uint16_t Mbuf[2][len];
+
+    int cur = 0, next = 1;
+
+    long long i;
+
+    /* Initialize M buffer */
+    for (i = 0; i < len; i++) {
+        Mbuf[cur][i] = M[i];
+    }
+
+    long long curlen = len;
+
+    /* Step 1: Build combined values from bytes (reverse of Encode shrinking) */
+    while (curlen > 1) {
+        long long newlen = (curlen + 1) / 2;
+
+        for (i = 0; i < newlen; i++) {
+            R[cur][i] = 0;
+        }
+
+        /* Reconstruct combined values */
+        for (i = newlen - 1; i >= 0; i--) {
+            uint32_t m = Mbuf[cur][i];
+            uint32_t r = 0;
+            uint32_t shift = 1;
+
+            /* Rebuild r from bytes */
+            while (m > 1) {
+                m = (m + 255) >> 8;
+                r += (*in++) * shift;
+                shift <<= 8;
+            }
+
+            R[cur][i] = (uint16_t) r;
+        }
+
+        /* Step 2: Split combined values into pairs */
+        for (i = 0; i < curlen - 1; i += 2) {
+            uint32_t m0 = Mbuf[cur][i];
+            uint32_t r = R[cur][i / 2];
+
+            R[next][i]     = r % m0;
+            R[next][i + 1] = r / m0;
+
+            Mbuf[next][i]     = m0;
+            Mbuf[next][i + 1] = Mbuf[cur][i + 1];
+        }
+
+        /* Handle odd element */
+        if (i < curlen) {
+            R[next][i] = R[cur][i / 2];
+            Mbuf[next][i] = Mbuf[cur][i];
+        }
+
+        /* Swap buffers */
+        cur ^= 1;
+        next ^= 1;
+
+        curlen = newlen;
+    }
+
+    /* Final step: last element */
+    {
+        uint32_t m = Mbuf[cur][0];
+        uint32_t r = 0;
+        uint32_t shift = 1;
+
+        while (m > 1) {
+            m = (m + 255) >> 8;
+            r += (*in++) * shift;
+            shift <<= 8;
+        }
+
+        R[cur][0] = (uint16_t) r;
+    }
+
+    /* Output final values */
+    for (i = 0; i < len; i++) {
+        out[i] = R[cur][i];
+    }
+}
