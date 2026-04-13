@@ -30,7 +30,7 @@ static int R3_inv(F3 *out, const F3 *in)
         v[0] = 0;
     
         sign = -g[0]*f[0];
-        swap = int16_negative_mask(-delta) & int16_nonzero_mask(g[0]);
+        swap = isNegative(-delta) & isNonZero(g[0]);
         delta ^= swap&(delta^-delta);
         delta += 1;
     
@@ -51,7 +51,7 @@ static int R3_inv(F3 *out, const F3 *in)
     sign = f[0];
     for (i = 0;i < P;i++) out[i] = sign*v[P-1-i];
   
-    return int16_nonzero_mask(delta);
+    return isNonZero(delta);
 }
 
 // returns 0 if succeeded, else -1
@@ -84,7 +84,7 @@ static int Rq3_inv(Fq *out, const F3 *in)
         for (i = P;i > 0;--i) v[i] = v[i-1];
         v[0] = 0;
 
-        swap = int16_negative_mask(-delta) & int16_nonzero_mask(g[0]);
+        swap = isNegative(-delta) & isNonZero(g[0]);
         delta ^= swap&(delta^-delta);
         delta += 1;
 
@@ -107,7 +107,7 @@ static int Rq3_inv(Fq *out, const F3 *in)
     scale = Fq_recip(f[0]);
     for (i = 0;i < P;++i) out[i] = Fq_mod(scale*(int32_t)v[P-1-i]);
 
-    return int16_nonzero_mask(delta);
+    return isNonZero(delta);
 }
 
 static void Fq_add(Fq *h,const Fq *f,const Fq *g, int F_scale, int G_scale, int index_adj) {
@@ -133,3 +133,4 @@ static void F3_sub(F3 *h,const F3 *f,const F3 *g, int F_scale, int G_scale, int 
         h[i] = F3_mod((int32_t)f[i] * F_scale - g[i] * G_scale);
     }
 }
+

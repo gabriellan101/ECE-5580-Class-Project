@@ -44,6 +44,14 @@ static bool isTSmall(int * f, int f_length) {
     return (bigCount > W) ? false: true;
 }
 
+static int isNonZero(int16_t f){
+    return (f != 0) ? -1 : 0;
+}
+
+static int isNegative(int16_t f){
+    return (f < 0) ? -1 : 0;
+}
+
 #include "polyUtils.c"
 
 #endif

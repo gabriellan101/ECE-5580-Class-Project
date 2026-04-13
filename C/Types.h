@@ -40,6 +40,7 @@ static inline int8_t F3_mod(int32_t x) {
     return (int8_t)(r - 1); // typecast down to int8_t to save space
 }
 
+static void Rq_reduceR3(F3 *out, const Fq *in);
 
 
 #include "types.c"
