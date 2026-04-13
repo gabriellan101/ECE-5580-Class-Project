@@ -28,7 +28,7 @@ static int Rq3_inv(Fq *out,const F3 *in);
 // adding and subtracting polynomials in Rq and R3
 // index_adj is used to specify the length of the polynomials, which is necessary for the inverse function which uses polynomials of length P+1
 // F_scale and G_scale are used to specify the scaling of the input polynomials, which is necessary for inverse and for the decryption process 
-//where we need to add a scaled version of the ciphertext to a scaled version of the secret key
+// where we need to add a scaled version of the ciphertext to a scaled version of the secret key
 static void Fq_add(Fq *h,const Fq *f,const Fq *g, int F_scale, int G_scale, int index_adj);
 static void Fq_sub(Fq *h,const Fq *f,const Fq *g, int F_scale, int G_scale, int index_adj);
 

@@ -6,15 +6,16 @@
 static int R3_inv(F3 *out, const F3 *in)
 {
     F3 f[P+1],g[P+1],v[P+1],r[P+1];
-    int i,loop,delta;
-    int sign,swap,t;
+    int i,loop,delta, sign, swap, t;
   
-    for (i = 0;i < P+1;++i) v[i] = 0;
-    for (i = 0;i < P+1;++i) r[i] = 0;
+    for (i = 0;i < P+1;++i){
+        v[i] = 0;
+        r[i] = 0;
+        f[i] = 0;
+        if (i < P) g[P-1-i] = in[i]; // reverse of the input polynomial
+    } 
     r[0] = 1;
-    for (i = 0;i < P;++i) f[i] = 0;
     f[0] = 1; f[P-1] = f[P] = -1; // Ring modulus X^p - x - 1, inverse must be modulo ring
-    for (i = 0;i < P;++i) g[P-1-i] = in[i]; // reverse of the input polynomial
     g[P] = 0;
     
     delta = 1; 
@@ -52,8 +53,7 @@ static int R3_inv(F3 *out, const F3 *in)
 static int Rq3_inv(Fq *out, const F3 *in)
 {
     Fq f[P+1],g[P+1],v[P+1],r[P+1];
-    int i,loop,delta;
-    int swap,t;
+    int i,loop,delta, swap, t;
     int32_t f0,g0;
     Fq scale;
 
