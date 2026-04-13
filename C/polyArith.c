@@ -8,14 +8,18 @@ static int R3_inv(F3 *out, const F3 *in)
     F3 f[P+1],g[P+1],v[P+1],r[P+1];
     int i,loop,delta, sign, swap, t;
   
-    for (i = 0;i < P+1;++i){
+    for (i = 0;i < P+1;i++){
         v[i] = 0;
         r[i] = 0;
-        f[i] = 0;
-        if (i < P) g[P-1-i] = in[i]; // reverse of the input polynomial
+        if (i < P){
+            g[P-1-i] = in[i]; // reverse of the input polynomial
+            f[i] = 0;
+        }
     } 
     r[0] = 1;
-    f[0] = 1; f[P-1] = f[P] = -1; // Ring modulus X^p - x - 1, inverse must be modulo ring
+    f[0] = 1;
+    f[P-1] = -1;
+    f[P] = -1; // Ring modulus X^p - x - 1, inverse must be modulo ring
     g[P] = 0;
     
     delta = 1; 
@@ -30,20 +34,22 @@ static int R3_inv(F3 *out, const F3 *in)
         delta ^= swap&(delta^-delta);
         delta += 1;
     
-        for (i = 0;i < P+1;++i) {
+        for (i = 0;i < P+1;i++) {
             t = swap&(f[i]^g[i]); f[i] ^= t; g[i] ^= t;
             t = swap&(v[i]^r[i]); v[i] ^= t; r[i] ^= t;
         }
   
-        for (i = 0;i < P+1;++i) g[i] = F3_freeze(g[i]+sign*f[i]);
-        for (i = 0;i < P+1;++i) r[i] = F3_freeze(r[i]+sign*v[i]);
+        for (i = 0;i < P+1;i++){
+            g[i] = F3_mod(g[i]+sign*f[i]);
+            r[i] = F3_mod(r[i]+sign*v[i]);
+        } 
 
-        for (i = 0;i < P;++i) g[i] = g[i+1];
+        for (i = 0;i < P;i++) g[i] = g[i+1];
         g[P] = 0;
     }
   
     sign = f[0];
-    for (i = 0;i < P;++i) out[i] = sign*v[P-1-i];
+    for (i = 0;i < P;i++) out[i] = sign*v[P-1-i];
   
     return int16_nonzero_mask(delta);
 }
@@ -57,12 +63,19 @@ static int Rq3_inv(Fq *out, const F3 *in)
     int32_t f0,g0;
     Fq scale;
 
-    for (i = 0;i < P+1;++i) v[i] = 0;
-    for (i = 0;i < P+1;++i) r[i] = 0;
+    for (i = 0;i < P+1;i++){
+        v[i] = 0;
+        r[i] = 0;
+        if (i < P){
+            g[P-1-i] = in[i]; // reverse of the input polynomial
+            f[i] = 0;
+        }
+    } 
+
     r[0] = Fq_recip(3);
-    for (i = 0;i < P;++i) f[i] = 0;
-    f[0] = 1; f[P-1] = f[P] = -1;
-    for (i = 0;i < P;++i) g[P-1-i] = in[i];
+    f[0] = 1;
+    f[P-1] = -1;
+    f[P] = -1; // Ring modulus X^p - x - 1, inverse must be modulo ring
     g[P] = 0;
 
     delta = 1;
@@ -75,22 +88,24 @@ static int Rq3_inv(Fq *out, const F3 *in)
         delta ^= swap&(delta^-delta);
         delta += 1;
 
-        for (i = 0;i < P+1;++i) {
+        for (i = 0;i < P+1;i++) {
         t = swap&(f[i]^g[i]); f[i] ^= t; g[i] ^= t;
         t = swap&(v[i]^r[i]); v[i] ^= t; r[i] ^= t;
         }
 
         f0 = f[0];
         g0 = g[0];
-        for (i = 0;i < P+1;++i) g[i] = Fq_freeze(f0*g[i]-g0*f[i]);
-        for (i = 0;i < P+1;++i) r[i] = Fq_freeze(f0*r[i]-g0*v[i]);
+        for (i = 0;i < P+1;i++){
+            g[i] = Fq_mod(f0*g[i]-g0*f[i]);
+            r[i] = Fq_mod(f0*r[i]-g0*v[i]);
+        } 
 
-        for (i = 0;i < P;++i) g[i] = g[i+1];
+        for (i = 0;i < P;i++) g[i] = g[i+1];
         g[P] = 0;
     }
 
     scale = Fq_recip(f[0]);
-    for (i = 0;i < P;++i) out[i] = Fq_freeze(scale*(int32_t)v[P-1-i]);
+    for (i = 0;i < P;++i) out[i] = Fq_mod(scale*(int32_t)v[P-1-i]);
 
     return int16_nonzero_mask(delta);
 }
