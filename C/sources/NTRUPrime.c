@@ -68,7 +68,7 @@ static void Decrypt(F3 *r, const Fq *c, const F3 *ginv, const F3 f) {
     F3F3_mult(ev, e, ginv);
     valid = isValidPoly(ev);
 
-    r = reconstruct(valid, ev);
+    reconstruct(r, valid, ev);
 }
 
 
