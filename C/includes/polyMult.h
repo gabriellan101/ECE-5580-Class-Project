@@ -31,23 +31,16 @@ void RqMult(int * f, int f_length, int * g, int g_length, int * h, int h_length)
     polyMultHelper(f, f_length, g, g_length, h, h_length);
     polyMultReduce(h, h_length, Q);
     for(int i = 0; i < h_length; i++) {
-        h[i] = h[i] % Q;
+        h[i] = Fq_mod(h[i]);
     }
 }
 
-void RpMult(int * f, int f_length, int * g, int g_length, int * h, int h_length) {
-    polyMultHelper(f, f_length, g, g_length, h, h_length);
-    polyMultReduce(h, h_length, P);
-    for(int i = 0; i < h_length; i++) {
-        h[i] = h[i] % P;
-    }
-}
 void R3Mult(int * f, int f_length, int * g, int g_length, int * h, int h_length) {
     int * h_temp = (int*)malloc((f_length+g_length)*sizeof(int));
     polyMultHelper(f, f_length, g, g_length, h_temp, f_length+g_length);
     polyMultReduce(h_temp, f_length+g_length, 3);
     for(int i = 0; i < h_length; i++) {
-        h[i] = h_temp[i] % 3;
+        h[i] = F3_mod(h_temp[i]);
     }
     free(h_temp);
 }
