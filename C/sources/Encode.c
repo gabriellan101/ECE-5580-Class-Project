@@ -4,108 +4,84 @@
 Primary encode/encapsulation function
 
 long long used for overflow safety
+
+Compute → c=rh+m (mod q)
 */
-void Encode(long long arrayLen, const uint16_t *R, const uint16_t *Moduli, unsigned char *out){
-
-    //base case 
-    if (arrayLen == 1) // only encoding one num
-    {
-        uint16_t r = R[0]; //encoding a single number r with limit m 
-        uint16_t m = Moduli[0];
-
-        //take the lowest 8 bits of r and output a byte 
-        //shift r right to remove those bits 
-        //shrink m accordingly 
-        //basically --> write r in base 256 (bytes) but only as many bytes as needed for m 
-        while (m > 1) // exit condition  
-        {
-            *out++ = r; // output is array value encoded 
-            r >>=8;
-            m = (m+255)>>8;
-        }
-    }
-    //recursive packing 
-    if (arrayLen > 1) //combining nums from array to then encode 
-    {
-        uint16_t R2[(arrayLen+1)/2]; 
-        uint16_t M2[(arrayLen+1)/2];
-        long long i;
-        for (i = 0;i < arrayLen-1;i += 2) {
-            uint32_t m0 = Moduli[i];
-            //mixed-radix encoding; instead of storing R[i], R[i+1], we combine them 
-            uint32_t r = R[i]+R[i+1]*m0;
-            uint32_t m = Moduli[i+1]*m0;
-            //if combind range m is big --> emit bytes 
-            //shrink both r and m 
-            while (m >= 16384) {
-                *out++ = r;
-                r >>= 8;
-                m = (m+255)>>8;
-            }
-            //storing reduced values; creating smaller problem 
-            R2[i/2] = r;
-            M2[i/2] = m;
-        }   
-        if (i < arrayLen) {
-            //if there is an extra element, carry it forward 
-            R2[i/2] = R[i];
-            M2[i/2] = Moduli[i];
-        }
-        Encode(out,R2,M2,(arrayLen+1)/2);
-    }
-}
-
 
 void Encode(unsigned char *out, const uint16_t *R, const uint16_t *M, long long len)
 {
-    /* We will repeatedly shrink the problem size */
+    // Base case (length of message to encode is 1)
+    if (len == 1) {
+
+        // accessing arrays 
+        uint16_t r = R[0]; // single number being encoded into bytes 
+        uint16_t m = M[0]; // bounded moduli
+
+        // mod is not bound at 1
+        
+        while (m > 1) {
+            // storing a 32-bit value into 8-bit slot 
+            // only writing the lowest 8 bits to the output buffer 
+            *out = (unsigned char) r; // need to advance location of output 
+            out++; // moving pointer 
+            // shift for byte emitted 
+            r >>= 8;
+            // calculating upper bound of mod divided by 256 
+            m = (m + 255) >> 8;
+        }
+    }
+    
+
+    // continuously half the problem by combining pairs 
     while (len > 1) {
+
+        // halfing length of array (due to combination of pairs)
         long long newlen = (len + 1) / 2;
+        
+        uint16_t R2[newlen]; // new integer array 
+        uint16_t M2[newlen]; // new moduli array
 
-        uint16_t R2[newlen];
-        uint16_t M2[newlen];
+        long long i; // index variable 
 
-        long long i;
+        // loop through 
         for (i = 0; i < len - 1; i += 2) {
-            uint32_t m0 = M[i];
+            uint32_t m0 = M[i]; // bound
+            // mixed radix packing to combine pairs 
+            // R[i+1]∈[0,M[i+1])
             uint32_t r = R[i] + (uint32_t)R[i + 1] * m0;
             uint32_t m = (uint32_t)M[i + 1] * m0;
 
-            /* Output bytes while range is large */
+            // when the mod range is large --> r safe to emit byte
+            // divide r & m by 256, round up for m, and emit lowest byte for r 
             while (m >= 16384) {
                 *out++ = (unsigned char) r;
-                r >>= 8;
+                // shift 
+                r >>= 8; 
+                // calculating upper bound of mod divided by 256 
                 m = (m + 255) >> 8;
             }
 
+            // store reduced values calculated 
+            // store new integers
             R2[i / 2] = (uint16_t) r;
+            // store new moduli 
             M2[i / 2] = (uint16_t) m;
         }
 
-        /* Handle odd element */
+        // handling unpaired elements --> carrying forward 
         if (i < len) {
             R2[i / 2] = R[i];
             M2[i / 2] = M[i];
         }
 
-        /* Move to next level */
+        // overwriting original input arrays 
         for (i = 0; i < newlen; i++) {
             ((uint16_t *)R)[i] = R2[i];
             ((uint16_t *)M)[i] = M2[i];
         }
-
+        // starts the new smaller problem; base case will not hit this
         len = newlen;
     }
 
-    /* Final base case (len == 1) */
-    if (len == 1) {
-        uint16_t r = R[0];
-        uint16_t m = M[0];
-
-        while (m > 1) {
-            *out++ = (unsigned char) r;
-            r >>= 8;
-            m = (m + 255) >> 8;
-        }
-    }
+    
 }
