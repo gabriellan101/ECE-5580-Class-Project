@@ -40,8 +40,10 @@ static inline int8_t F3_mod(int32_t x) {
     return (int8_t)(r - 1); // typecast down to int8_t to save space
 }
 
+// Rq -> R3 reduction function used in decryption process
 static void Rq_reduceR3(F3 *out, const Fq *in);
 
 
-#include "types.c"
+#include "../sources/Types.c"
+
 #endif

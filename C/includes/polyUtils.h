@@ -52,6 +52,6 @@ static int isNegative(int16_t f){
     return (f < 0) ? -1 : 0;
 }
 
-#include "polyUtils.c"
+#include "../sources/polyUtils.c"
 
 #endif

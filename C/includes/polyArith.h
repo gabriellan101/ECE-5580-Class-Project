@@ -37,6 +37,6 @@ static void F3_add(F3 *h,const F3 *f,const F3 *g, int F_scale, int G_scale, int 
 static void F3_sub(F3 *h,const F3 *f,const F3 *g, int F_scale, int G_scale, int index_adj);
 
 
-#include "polyArith.c"
+#include "../sources/polyArith.c"
 
 #endif
