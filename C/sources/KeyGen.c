@@ -48,16 +48,8 @@ void KeyGen() {
     int f3[P];
     polyMultHelper(&f, P, &threePoly, 1, &f3, P);
 
-    int finv[P];
 
-
-    /*TODO: replace with actual invert function*/
-    //invert(F, finv);
-
-    int h[Q];
-    RqMult(g, P, finv, P, h, Q);
-
-
+    
     //mult f by 3
     //invert f
     //find h = g/(3f)
