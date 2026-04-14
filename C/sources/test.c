@@ -6,6 +6,7 @@
 #include "../includes/polyArith.h"
 #include <string.h>
 #include <time.h>
+#include "polyMult.h"
 
 #define Q 4591
 #define adj ((Q-1)/2)
