@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include "Types.h"
-#include "polyUtils.h"
-#include "polyArith.h"
+#include "../includes/Types.h"
+#include "../includes/polyUtils.h"
+#include "../includes/polyArith.h"
 #include <string.h>
 #include <time.h>
 

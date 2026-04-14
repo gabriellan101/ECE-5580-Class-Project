@@ -1,5 +1,6 @@
 
-#include "Types.h"
+#include "../includes/Types.h"
+#include "../includes/polyMult.h"
 #include <stdbool.h>
 
 
@@ -32,6 +33,13 @@ void KeyGen() {
     }
     } while (isTSmall(&f));
 
+    int threePoly = {3};
+
+    int f3[P];
+    polyMultHelper(&f, P, &threePoly, 1, &f3, P);
+
+
+    
     //mult f by 3
     //invert f
     //find h = g/(3f)

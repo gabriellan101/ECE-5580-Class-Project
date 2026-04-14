@@ -1,4 +1,4 @@
-#include "Decode.h"
+#include "../includes/Decode.h"
 #include <stdint.h>
 /*
 Primary decode/decapsulation function

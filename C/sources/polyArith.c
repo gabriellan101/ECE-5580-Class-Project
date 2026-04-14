@@ -1,4 +1,4 @@
-#include "polyArith.h"
+#include "../includes/polyArith.h"
 
 
 // returns 0 if succeeded, else -1

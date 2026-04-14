@@ -1,4 +1,4 @@
-#include "polyUtils.h"
+#include "../includes/polyUtils.h"
 
 // this function has been tested against the original O(Q) implementation and produces the same output for every nonzero element in Fq
 static Fq Fq_recip(Fq x) {

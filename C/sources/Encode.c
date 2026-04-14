@@ -1,4 +1,4 @@
-#include "Encode.h"
+#include "../include/Encode.h"
 #include <stdint.h>
 /*
 Primary encode/encapsulation function

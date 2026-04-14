@@ -43,11 +43,13 @@ void RpMult(int * f, int f_length, int * g, int g_length, int * h, int h_length)
     }
 }
 void R3Mult(int * f, int f_length, int * g, int g_length, int * h, int h_length) {
-    polyMultHelper(f, f_length, g, g_length, h, h_length);
-    polyMultReduce(h, h_length, 3);
+    int * h_temp = (int*)malloc((f_length+g_length)*sizeof(int));
+    polyMultHelper(f, f_length, g, g_length, h_temp, f_length+g_length);
+    polyMultReduce(h_temp, f_length+g_length, 3);
     for(int i = 0; i < h_length; i++) {
-        h[i] = h[i] % 3;
+        h[i] = h_temp[i] % 3;
     }
+    free(h_temp);
 }
 
 
