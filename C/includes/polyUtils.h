@@ -44,6 +44,7 @@ static bool isTSmall(int * f, int f_length) {
     return (bigCount > W) ? false: true;
 }
 
+// following two functions are used to track invertibilty of polynomials in both inverse functions
 static int isNonZero(int16_t f){
     return (f != 0) ? -1 : 0;
 }
@@ -51,6 +52,15 @@ static int isNonZero(int16_t f){
 static int isNegative(int16_t f){
     return (f < 0) ? -1 : 0;
 }
+
+// rounds the coefficients of the input polynomial to the nearest element in R3, which is used in the decryption process to recover the message
+static void roundR3(Fq *out, const Fq *in) {
+    for (int i = 0; i < P; i++) out[i] = in[i] - F3_mod(in[i]);
+}
+
+static int isValidPoly(F3 *x);
+
+static void reconstruct(F3 *out, static int valid, static F3 *in);
 
 #include "../sources/polyUtils.c"
 

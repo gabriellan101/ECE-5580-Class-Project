@@ -38,11 +38,37 @@ static void KeyGen(Fq *h, F3 *f, F3 *ginv) {
 }
 
 /*
-    Function inputs:
-
+    Function call:
+    R: randomly sampled small polynomial in R3, not dependent on even distribution of the coefficients in {-1, 0, 1}
+    H: Public key in Rq
+    C: Ciphertext in Rq - should be blank to start, and will be overwritten with the output of the encryption function
 */
-static void Encrypt(Fq *c, const F3 *msg, const Fq *h) {
-    // TODO: implement encryption function
+static void Encrypt(Fq *c, const F3 *r, const Fq *h) {
+    Fq h1[P];
+    FqF3_mult(h1, h, r);
+    roundR3(c, h1);
+}
+
+/*
+    Steps for decryption:
+    Inputs are ciphertext, G inverse (called 'v' in spec), and f
+    1: Compute 3*f*c in Rq
+    2: Coefficients of 3fc should be between +/- (q-1)/2 - reduce mod 3 (rounding in encryption important for this step)
+    3: Multiply past result by Ginv in R/3
+    4: construct small polynomial 
+*/
+static void Decrypt(F3 *r, const Fq *c, const F3 *ginv, const F3 f) {
+    Fq cf[P], cf3[P];
+    F3 e[P], ev[P];
+    int valid;
+
+    FqF3_mult(cf, c, f);
+    Rq_scale3(cf3, cf);
+    Rq_reduceR3(e, cf3);
+    F3F3_mult(ev, e, ginv);
+    valid = isValidPoly(ev);
+
+    r = reconstruct(valid, ev);
 }
 
 
