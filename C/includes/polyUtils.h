@@ -52,6 +52,14 @@ static int isNegative(int16_t f){
     return (f < 0) ? -1 : 0;
 }
 
+/**
+ * Generates the bytes used for creating the g polynomial
+ */
+static uint32_t urandom32(void);
+/**
+ * Generates g, a small polynomial in R
+ */
+void makeGPoly(Fq * g);
 #include "../sources/polyUtils.c"
 
 #endif
