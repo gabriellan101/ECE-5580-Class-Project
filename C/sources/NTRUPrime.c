@@ -1,4 +1,4 @@
-#include "includes/NTRUPrime.h"
+#include "../includes/NTRUPrime.h"
 #include "../includes/KAT_rng.h"
 
 /*
