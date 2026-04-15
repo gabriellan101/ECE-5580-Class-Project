@@ -33,7 +33,7 @@ This function is a wrapper on OuterKeyGen that adds hash function usage - specif
 Full secret key layout after this function:
 sk[ 0 .. 381  ]  → Small_encode(f)[191] ; Small_encode(ginv) [191]  (ZKeyGen output)
 sk[ 382 .. 1539]  → copy of pk                          (for decap verification)
-sk[1540 .. 1571]  → random seed                         (implicit rejection)
+sk[1540 .. 1571]  → random seed  (rho)                  (implicit rejection)
 sk[1572 .. ?  ]  → Hash_prefix(pk)                      (cached hash)
 */
 static void KEM_KeyGen(unsigned char *pk, unsigned char *sk) {
@@ -70,18 +70,30 @@ static void OuterDecrypt(F3 *r, const unsigned char *CT, const unsigned char *sk
 
 static void Encap(unsigned char *CT, unsigned char *k, const unsigned char *pk){
   F3 r[P];
-  unsigned char r_enc[Inputs_bytes];
+  unsigned char r_prime[Inputs_bytes];
   unsigned char cache[Hash_bytes];
 
-  Hash_prefix(cache,4,pk,PublicKeys_bytes);
-  Inputs_random(r);
-  Hide(c,r_enc,r,pk,cache);
-  HashSession(k,1,r_enc,c);
-
+  Hash_prefix(cache,4,pk,PK_bytes);
+  Short_random(r);
+  OuterEncrypt(CT,r,pk); 
+  CT += Ciphertexts_bytes; // adjust pointer value to next segment
+  HashConfirm(CT,r_prime,pk,cache);
+  HashSession(k,1,r_prime,CT);
 }
 
+/*
+Decapsulation steps:
+1: desegment the public key, rho, and hash prefix from the KEM_KeyGen() output
+2: 
+*/
 static void Decap(unsigned char *k, const unsigned char *CT, const unsigned char *sk){
+  const unsigned char *pk = sk + SK_bytes; // starting pointer to encapsulated public key
+  const unsigned char *rho = pk + PK_bytes; // Pointer to random seed used for implicit rejection for confirmation step
+  const unsigned char *cache = rho + Inputs_bytes; // pointer to hash prefix section of data
 
+  F3 r[P];
+  unsigned char r_enc[Inputs_bytes];
+  unsigned char cnew[Ciphertexts_bytes+Confirm_bytes];
 
 }
 

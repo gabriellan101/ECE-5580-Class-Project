@@ -45,24 +45,19 @@ void R3Mult(int * f, int f_length, int * g, int g_length, int * h, int h_length)
     free(h_temp);
 }
 
-// defined in types.h already, works exactly the same
-int mod3Centered(int x) {
-    return ((x + 1) % 3) - 1;
-}
 
-
-void keyGenMult(int *f, int *g, int * h) {
+void keyGenMult(Fq *f, F3 *g, Fq * h) {
     for(int i = 0; i < 2*P-1; i++) {
         h[i] = 0;
     }
     for(int fi = 0; fi < P; fi++) {
         for(int gi = 0; gi < P; gi++) {
-            h[fi+gi] = F3_mod(h[fi+gi]+f[fi]*g[gi]);
+            h[fi+gi] = Fq_mod(h[fi+gi]+f[fi]*g[gi]);
         }
     }
     for(int i = P; i < 2*P-1; i++) {
-        h[i-P] = F3_mod(h[i-P] + h[i]);
-        h[i-P+1] = F3_mod(h[i-P+1] + h[i+1]);
+        h[i-P] = Fq_mod(h[i-P] + h[i]);
+        h[i-P+1] = Fq_mod(h[i-P+1] + h[i+1]);
     }
 }
 #endif
