@@ -34,8 +34,10 @@ static void KeyGen(Fq *h, F3 *f, F3 *ginv) {
 }
 
 /*
-    Function inputs:
-
+    Function call:
+    R: randomly sampled small polynomial in R3, not dependent on even distribution of the coefficients in {-1, 0, 1}
+    H: Public key in Rq
+    C: Ciphertext in Rq - should be blank to start, and will be overwritten with the output of the encryption function
 */
 static void Encrypt(Fq *c, const F3 *r, const Fq *h) {
     Fq h1[P];
