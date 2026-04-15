@@ -1,5 +1,5 @@
 #include "includes/NTRUPrime.h"
-
+#include "../includes/KAT_rng.h"
 
 /*
 Steps for key generation:
@@ -14,18 +14,18 @@ static void KeyGen(Fq *h, F3 *f, F3 *ginv) {
     F3 g[P];
     Fq finv[P];
     
+
     // loop breaks upon finding an invertible G, which is guaranteed to happen with high probability
     while (true) {
         // step 1
-        // F3_random(g); TODO: implement F3 random function
+        makeGPoly(g);
         if (R3_inv(ginv, g) == 0) { // step 1a
             break;
         }
     }
 
     // step 2
-    // F3_random(f); TODO: implement F3 random function
-
+    Short_random(f);
     // step 3
     Rq3_inv(finv, f); // always works
     

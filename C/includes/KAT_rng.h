@@ -8,7 +8,8 @@
 #ifndef KAT_RNG
 #define KAT_RNG
 #include "Types.h"
-#include "polyUtils.h"
+//#include "polyUtils.h"
+#include "rng.h"
 
 /**
  * Generates the bytes used for creating the g polynomial

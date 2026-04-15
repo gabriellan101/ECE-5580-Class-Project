@@ -1,18 +1,14 @@
-/*
-gcc test_rng.c -o test.exe -I"C:/Program Files/OpenSSL-Win64/include" -I"C:/Program Files/OpenSSL-Win64/bin"
-
-gcc test_rng.c rng.c -o test.exe -I"C:/Program Files/OpenSSL-Win64/include" -L"C:/Program Files/OpenSSL-Win64/bin" -llibcrypto-3-x64
- */
-
-//#define _GNU_SOURCE 
-#include "rng.h"
+//gcc rng.c run_KAT.c -I"../includes" -Iopenssl_files -Lopenssl_files -llibcrypto-3-x64 -o test.exe
+//^ add c files as test expands
+#include "KAT_rng.h"
 #include <stdio.h>
-#include <stdint.h>
+
 #define KATNUM 1
-#define SEED_LENGTH
+#define SEED_LENGTH 10
 
 unsigned char entropy_input[48];
 unsigned char seed[KATNUM][48];
+
 
 int main() {
     printf("started\n");
@@ -27,7 +23,7 @@ int main() {
 
     FILE * seed_file = fopen("seeds.txt", "r");
     char buffer[1028];
-    int len = 10;
+    int len = SEED_LENGTH;
 
     fgets(buffer, len, seed_file);
 
@@ -39,6 +35,17 @@ int main() {
 
     for (i=0; i<KATNUM; i++)
         randombytes(seed[i], 48);
- 
 
+    for(int i = 0; i < 48; i++) {
+        printf("%i\n", seed[0][i]);
+    }
+
+    for(int i = 0; i < KATNUM; i++) {
+        /**
+         * 1) Generate Keypair
+         * 2) Compare public and secret key to expected values
+         * 3) rest of KAT?
+         */
+
+    }
 }

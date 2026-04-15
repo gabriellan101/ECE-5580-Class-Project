@@ -42,21 +42,3 @@ static void reconstruct(F3 *out, static int valid, static F3 *in){
     }
 }
 
-#if KAT
-static uint32_t urandom32(void)
-{
-  unsigned char c[4];
-  uint32_t out[4];
-
-  randombytes(c,4);
-  out[0] = (uint32_t)c[0];
-  out[1] = ((uint32_t)c[1])<<8;
-  out[2] = ((uint32_t)c[2])<<16;
-  out[3] = ((uint32_t)c[3])<<24;
-  return out[0]+out[1]+out[2]+out[3];
-}
-
-void makeGPoly(Fq * g) {
-    for (int i = 0;i < P;++i) g[i] = (((urandom32()&0x3fffffff)*3)>>30)-1;
-}
-#endif
