@@ -30,7 +30,7 @@ static void KeyGen(Fq *h, F3 *f, F3 *ginv) {
     Rq3_inv(finv, f); // always works
     
     // step 4
-    FqF3_mult(h, finv, g);    
+    FqF3_mult(h, finv, g);    // replace with our mult function instead of placeholder
 }
 
 /*
@@ -41,7 +41,7 @@ static void KeyGen(Fq *h, F3 *f, F3 *ginv) {
 */
 static void Encrypt(Fq *c, const F3 *r, const Fq *h) {
     Fq h1[P];
-    FqF3_mult(h1, h, r);
+    FqF3_mult(h1, h, r); // replace with our mult funciton
     roundR3(c, h1);
 }
 
@@ -58,7 +58,7 @@ static void Decrypt(F3 *r, const Fq *c, const F3 *ginv, const F3 f) {
     F3 e[P], ev[P];
     int valid;
 
-    FqF3_mult(cf, c, f);
+    FqF3_mult(cf, c, f); // replace
     Rq_scale3(cf3, cf);
     Rq_reduceR3(e, cf3);
     F3F3_mult(ev, e, ginv);
