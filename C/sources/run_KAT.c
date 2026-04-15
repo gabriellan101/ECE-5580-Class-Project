@@ -1,3 +1,5 @@
+//gcc rng.c run_KAT.c -I"../includes" -Iopenssl_files -Lopenssl_files -llibcrypto-3-x64 -o test.exe
+//^ add c files as test expands
 #include "KAT_rng.h"
 #include <stdio.h>
 
@@ -36,5 +38,14 @@ int main() {
 
     for(int i = 0; i < 48; i++) {
         printf("%i\n", seed[0][i]);
+    }
+
+    for(int i = 0; i < KATNUM; i++) {
+        /**
+         * 1) Generate Keypair
+         * 2) Compare public and secret key to expected values
+         * 3) rest of KAT?
+         */
+
     }
 }

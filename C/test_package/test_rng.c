@@ -34,13 +34,11 @@ int main() {
     printf(buffer);
 
     for (i=0; i<48; i++)
-        entropy_input[i] = i+1;
+        entropy_input[i] = i;
     randombytes_init(entropy_input, NULL, 256);
 
     for (i=0; i<KATNUM; i++)
         randombytes(seed[i], 48);
  
-    for(int i = 0; i < 48; i++) {
-        printf("%i\n",seed[0][i]);
-    }
+
 }
