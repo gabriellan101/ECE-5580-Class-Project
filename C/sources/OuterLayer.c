@@ -75,16 +75,25 @@ static void Encap(unsigned char *CT, unsigned char *k, const unsigned char *pk){
 
   Hash_prefix(cache,4,pk,PK_bytes);
   Short_random(r);
+
+  encodeR3(r_prime, r);
   OuterEncrypt(CT,r,pk); 
   CT += Ciphertexts_bytes; // adjust pointer value to next segment
   HashConfirm(CT,r_prime,pk,cache);
+
   HashSession(k,1,r_prime,CT);
 }
 
 /*
 Decapsulation steps:
 1: desegment the public key, rho, and hash prefix from the KEM_KeyGen() output
-2: 
+2: Generate new ciphertext for comparison
+3: Decrypt
+4: encode decrypted r into r_prime
+5: generate a new ciphertext for comparison with hashing
+6: check if they match
+7: if they don't match, replace r_prime with rho
+8: hash the output to produce the session key k
 */
 static void Decap(unsigned char *k, const unsigned char *CT, const unsigned char *sk){
   const unsigned char *pk = sk + SK_bytes; // starting pointer to encapsulated public key
@@ -92,9 +101,31 @@ static void Decap(unsigned char *k, const unsigned char *CT, const unsigned char
   const unsigned char *cache = rho + Inputs_bytes; // pointer to hash prefix section of data
 
   F3 r[P];
-  unsigned char r_enc[Inputs_bytes];
-  unsigned char cnew[Ciphertexts_bytes+Confirm_bytes];
+  unsigned char r_prime[Inputs_bytes];
+  unsigned char ctnew[Ciphertexts_bytes+Confirm_bytes];
 
+  OuterDecrypt(r, CT, sk);
+
+  encodeR3(r_prime, r);
+  OuterEncrypt(ctnew,r,pk); 
+  CT += Ciphertexts_bytes; // adjust pointer value to next segment
+  HashConfirm(ctnew,r_prime,pk,cache);
+
+  int matching = confirm(CT, ctnew); // write function to compare these
+
+  for(int i = 0; i < Inputs_bytes; i++){
+    if(matching == -1) r_prime[i] = rho[i];
+  }
+
+  HashSession(k, 1+matching, r_prime, CT);
+}
+
+static int confirm(const unsigned char *ct, const unsigned char *ct2){
+  
+  for(int i = 0; i < (Ciphertexts_bytes+Confirm_bytes); i++){
+    if (ct[i] != ct2[i]) return -1;
+  }
+  return 0;
 }
 
 

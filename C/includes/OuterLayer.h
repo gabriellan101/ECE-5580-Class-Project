@@ -38,6 +38,8 @@ static void Encap(unsigned char *CT, unsigned char *k, const unsigned char *pk);
 
 static void Decap(unsigned char *k, const unsigned char *CT, const unsigned char *sk);
 
+static int confirm(const unsigned char *ct, const unsigned char *ct2);
+
 /*
 Hash functions from reference implementation below this line
 */
