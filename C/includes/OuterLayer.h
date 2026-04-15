@@ -17,11 +17,15 @@
 This file defines the outer layer of NTRUPrime, which interfaces with real world applications. The secret key is sent
 out of band in practice. This file also includes definitions of hash functions used in the reference implementation to allow
 comparisons with the KATs. We chose to do this instead of finding an external library for hash functions for this reason.
+
+Note - while working on this code I realized that Tame Impala sounds like Stewie Griffin
 */
 
+// This function handles pk and sk generation while 
 static void OuterKeyGen(unsigned char *pk, unsigned char *sk);
 
 // The following function calls the above function in the NTRUPrime process and the outputs are used for encap and decap
+// It is a wrapper on top of OuterKeyGen() that intefaces with the hash functions
 static void KEM_keygen(unsigned char *pk, unsigned char *sk);
 
 static void OuterEncrypt(unsigned char *CT, const F3 r, const unsigned char *sk);
@@ -36,10 +40,15 @@ static void Decap(unsigned char *k, const unsigned char *CT, const unsigned char
 Hash functions from reference implementation below this line
 */
 
+// these definitions copied from the parameter definitions in the reference implemention
 #define Ciphertexts_bytes 1007
 #define Hash_bytes 32
 #define Confirm_bytes 32
 #define Inputs_bytes ((P+3)/4)
+#define Small_bytes Inputs_bytes
+#define SK_bytes (2*Small_bytes)
+#define Rq_bytes 1158
+#define PK_bytes Rq_bytes
 
 extern int crypto_hash_sha512(unsigned char *,const unsigned char *,unsigned long long);
 

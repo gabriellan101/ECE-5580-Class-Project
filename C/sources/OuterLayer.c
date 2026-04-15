@@ -1,6 +1,41 @@
 #include "../includes/OuterLayer.h"
 
+/*
+Steps in outer layer key generation:
+1. Compute key generation, returns h, f, ginv
+2. encode h into public key
+3. Encode f and ginv into secret key
+Steps 2 and 3 represent "encode K as a string K' in the public key space"
+and "encode k as a string k' in the secret key space"
 
+The encode functions were not in the scope of the project and were copied from the reference implementation 
+for consistency between our implementation and the reference 
+*/
+static void OuterKeyGen(unsigned char *pk, unsigned char *sk){
+Fq h[P];
+F3 f[P], ginv[P];
+
+keyGen(h, f, ginv);
+encodeRq(pk, h);
+encodeR3(sk, f);
+sk += Small_bytes; // this line bumps the pointer of the secret key to the starting point of where ginv should be
+/*
+sk -> [f encoded (191 bytes)][ginv encoded (191 bytes)]
+                            ^pointer needs to be here to not overwrite f encoding
+*/
+encodeR3(sk, ginv);
+// sk does not need to be decremented after this since the code calling this function still has the original pointer value
+}
+
+
+
+
+
+
+/*
+Below are the hash functions from the reference implementation. These were kept unchanged to allow
+consistency for KAT usage
+*/
 
 int crypto_hash_sha512(unsigned char *out,const unsigned char *in,unsigned long long inlen)
 {
@@ -8,6 +43,7 @@ int crypto_hash_sha512(unsigned char *out,const unsigned char *in,unsigned long 
   return 0;
 }
 
+// This function had to be changed for variable initialization, added malloc() and free()
 static void Hash_prefix(unsigned char *out,int b,const unsigned char *in,int inlen)
 {
     unsigned char *x;
