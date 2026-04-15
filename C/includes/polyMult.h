@@ -59,7 +59,10 @@ void keyGenMult(int *f, int *g, int * h) {
             h[fi+gi] = mod3Centered(h[fi+gi]+f[fi]*g[gi]);
         }
     }
-    polyMultReduce(h, 2*P-1, P);
+    for(int i = P; i < 2*P-1; i++) {
+        h[i-P] = mod3Centered(h[i-P] + h[i]);
+        h[i-P+1] = mod3Centered(h[i-P+1] + h[i+1]);
+    }
 }
 #endif
 
