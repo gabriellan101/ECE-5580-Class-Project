@@ -13,7 +13,9 @@
 
 // testing definitions for individual files - comment out which aren't being tested
 //#define POLYUTILS
-#define POLYARITHTEST
+//#define POLYARITHTEST
+
+#define POLYMULT
 
 typedef int16_t Fq;
 
@@ -367,6 +369,61 @@ static int test_Rq_recip3(int n_random, int n_invertible)
 
 #endif
 
+#ifdef POLYMULT
+/* h = f*g in the ring Rq */
+static void Rq_mult_small(Fq *h,const Fq *f,const F3 *g)
+{
+  Fq fg[P+P-1];
+  Fq result;
+  int i,j;
+
+  for (i = 0;i < P;++i) {
+    result = 0;
+    for (j = 0;j <= i;++j) result = Fq_mod(result+f[j]*(int32_t)g[i-j]);
+    fg[i] = result;
+  }
+  for (i = P;i < P+P-1;++i) {
+    result = 0;
+    for (j = i-P+1;j < P;++j) result = Fq_mod(result+f[j]*(int32_t)g[i-j]);
+    fg[i] = result;
+  }
+
+  for (i = P+P-2;i >= P;--i) {
+    fg[i-P] = Fq_freeze(fg[i-P]+fg[i]);
+    fg[i-P+1] = Fq_freeze(fg[i-P+1]+fg[i]);
+  }
+
+  for (i = 0;i < P;++i) h[i] = fg[i];
+}
+
+/* h = f*g in the ring R3 */
+static void R3_mult(F3 *h,const F3 *f,const F3 *g)
+{
+  F3 fg[P+P-1];
+  F3 result;
+  int i,j;
+
+  for (i = 0;i < P;++i) {
+    result = 0;
+    for (j = 0;j <= i;++j) result = F3_mod(result+f[j]*g[i-j]);
+    fg[i] = result;
+  }
+  for (i = P;i < P+P-1;++i) {
+    result = 0;
+    for (j = i-P+1;j < P;++j) result = F3_mod(result+f[j]*g[i-j]);
+    fg[i] = result;
+  }
+
+  for (i = P+P-2;i >= P;--i) {
+    fg[i-P] = F3_mod(fg[i-P]+fg[i]);
+    fg[i-P+1] = F3_mod(fg[i-P+1]+fg[i]);
+  }
+
+  for (i = 0;i < P;++i) h[i] = fg[i];
+}
+
+#endif
+
 
 int main() {
     #ifdef POLYUTILS
@@ -414,6 +471,11 @@ int main() {
 
     printf("\n%s\n", fail == 0 ? "ALL TESTS PASSED" : "SOME TESTS FAILED");
     return fail ? 1 : 0;
+
+    #endif
+
+    #ifdef POLYMULT
+
 
     #endif
 
