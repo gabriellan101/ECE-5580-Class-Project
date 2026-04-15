@@ -28,6 +28,31 @@ encodeR3(sk, ginv);
 }
 
 
+/*
+This function is a wrapper on OuterKeyGen that adds hash function usage - specifically hash prefix
+Full secret key layout after this function:
+sk[ 0 .. 381  ]  → Small_encode(f) ‖ Small_encode(v)   (ZKeyGen output)
+sk[ 382 .. 1539]  → copy of pk                          (for decap verification)
+sk[1540 .. 1571]  → random seed                         (implicit rejection)
+sk[1572 .. ?  ]  → Hash_prefix(pk)                      (cached hash)
+*/
+static void KEM_KeyGen(unsigned char *pk, unsigned char *sk) {
+  OuterKeyGen(sk, pk);
+  sk += SK_bytes; // increment sk pointer to start of next segment
+  memcpy(sk, pk, PK_bytes);
+  sk += PK_bytes;
+  randombytes(sk, Inputs_bytes);
+  sk += Inputs_bytes;
+  Hash_Prefix(sk,4,pk,PK_bytes);
+}
+
+static void OuterEncrypt(unsigned char *CT, const F3 *r, const unsigned char *sk){
+
+
+
+}
+
+
 
 
 

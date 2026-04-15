@@ -12,6 +12,8 @@
 #include <stdlib.h>
 #include "../test_package/openssl_files/openssl/sha.h"
 #include <stddef.h>
+#include <string.h>
+#include "../includes/rng.h"
 
 /*
 This file defines the outer layer of NTRUPrime, which interfaces with real world applications. The secret key is sent
