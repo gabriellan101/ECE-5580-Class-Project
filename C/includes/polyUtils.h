@@ -71,14 +71,4 @@ static int isValidPoly(F3 *x);
 
 static void reconstruct(F3 *out, static int valid, static F3 *in);
 
-/**
- * Generates the bytes used for creating the g polynomial
- */
-static uint32_t urandom32(void);
-/**
- * Generates g, a small polynomial in R
- */
-void makeGPoly(Fq * g);
-#include "../sources/polyUtils.c"
-
 #endif
