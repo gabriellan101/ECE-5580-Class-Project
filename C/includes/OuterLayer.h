@@ -30,7 +30,7 @@ static void OuterKeyGen(unsigned char *pk, unsigned char *sk);
 // It is a wrapper on top of OuterKeyGen() that intefaces with the hash functions
 static void KEM_keygen(unsigned char *pk, unsigned char *sk);
 
-static void OuterEncrypt(unsigned char *CT, const F3 r, const unsigned char *sk);
+static void OuterEncrypt(unsigned char *CT, const F3 r, const unsigned char *pk);
 
 static void OuterDecrypt(F3 *r, const unsigned char *CT, const unsigned char *sk);
 

@@ -16,7 +16,7 @@ such as Encrypt(), which only consists of three lines, but the complexity comes 
 
 static void KeyGen(Fq *h, F3 *f, F3 *ginv);
 static void Encrypt(Fq *c, const F3 *r, const Fq *h);
-static void Decrypt(F3 *out, const Fq *c, const F3 *ginv, const F3 f)
+static void Decrypt(F3 *out, const Fq *c, const F3 *f, const F3 *ginv)
 
 
 #include "sources/NTRUPrime.c"

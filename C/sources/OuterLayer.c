@@ -31,7 +31,7 @@ encodeR3(sk, ginv);
 /*
 This function is a wrapper on OuterKeyGen that adds hash function usage - specifically hash prefix
 Full secret key layout after this function:
-sk[ 0 .. 381  ]  → Small_encode(f) ‖ Small_encode(v)   (ZKeyGen output)
+sk[ 0 .. 381  ]  → Small_encode(f)[191] ; Small_encode(ginv) [191]  (ZKeyGen output)
 sk[ 382 .. 1539]  → copy of pk                          (for decap verification)
 sk[1540 .. 1571]  → random seed                         (implicit rejection)
 sk[1572 .. ?  ]  → Hash_prefix(pk)                      (cached hash)
@@ -46,15 +46,37 @@ static void KEM_KeyGen(unsigned char *pk, unsigned char *sk) {
   Hash_Prefix(sk,4,pk,PK_bytes);
 }
 
-static void OuterEncrypt(unsigned char *CT, const F3 *r, const unsigned char *sk){
+/*
+This function is a wrapper on the core encryption function that takes the output of KEM_KeyGen()
+and adds encoding and ciphertext generation
+*/
+static void OuterEncrypt(unsigned char *CT, const F3 *r, const unsigned char *pk){
+  Fq h[P], ct[P];
+  decodeRq(h, pk);
+  Encrypt(ct, r, h);
+  encode_rounded(CT, ct);
+}
 
+static void OuterDecrypt(F3 *r, const unsigned char *CT, const unsigned char *sk){
+  F3 f[P], ginv[P];
+  Fq ct[P];
+
+  decodeR3(f, sk);
+  sk += Small_bytes;
+  decodeR3(ginv, sk);
+  decode_rounded(ct, CT);
+  Decrypt(r, ct, f, ginv);
+}
+
+static void Encap(unsigned char *CT, unsigned char *k, const unsigned char *pk){
 
 
 }
 
+static void Decap(unsigned char *k, const unsigned char *CT, const unsigned char *sk){
 
-
-
+  
+}
 
 
 /*
