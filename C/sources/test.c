@@ -370,8 +370,9 @@ static int test_Rq_recip3(int n_random, int n_invertible)
 #endif
 
 #ifdef POLYMULT
+#define Q12 adj
 /* h = f*g in the ring Rq */
-static void Rq_mult_small(Fq *h,const Fq *f,const F3 *g)
+static void Rq_mult_small_ref(Fq *h,const Fq *f,const F3 *g)
 {
   Fq fg[P+P-1];
   Fq result;
@@ -397,7 +398,7 @@ static void Rq_mult_small(Fq *h,const Fq *f,const F3 *g)
 }
 
 /* h = f*g in the ring R3 */
-static void R3_mult(F3 *h,const F3 *f,const F3 *g)
+static void R3_mult_ref(F3 *h,const F3 *f,const F3 *g)
 {
   F3 fg[P+P-1];
   F3 result;
@@ -420,6 +421,117 @@ static void R3_mult(F3 *h,const F3 *f,const F3 *g)
   }
 
   for (i = 0;i < P;++i) h[i] = fg[i];
+}
+
+/* ── helpers ── */
+
+/* reproducible LCG so failures are repeatable */
+static uint32_t lcg_state = 0xdeadbeef;
+static uint32_t lcg_next(void) {
+    lcg_state ^= lcg_state << 13;
+    lcg_state ^= lcg_state >> 17;
+    lcg_state ^= lcg_state << 5;
+    return lcg_state;
+}
+
+static void rand_Fq_poly(Fq *f) {
+    for (int i = 0; i < P; ++i)
+        f[i] = (Fq)((lcg_next() % Q) - Q12); /* values in [-(Q-1)/2 .. (Q-1)/2] */
+}
+
+static void rand_F3_poly(F3 *f) {
+    for (int i = 0; i < P; ++i)
+        f[i] = (F3)((lcg_next() % 3) - 1);   /* values in {-1, 0, 1} */
+}
+
+static int cmp_Fq(const Fq *a, const Fq *b, const char *label, int trial) {
+    for (int i = 0; i < P; ++i) {
+        if (a[i] != b[i]) {
+            printf("FAIL  %s  trial=%d  coeff[%d]  ref=%d  mine=%d\n",
+                   label, trial, i, (int)a[i], (int)b[i]);
+            return 0;
+        }
+    }
+    return 1;
+}
+
+static int cmp_F3(const F3 *a, const F3 *b, const char *label, int trial) {
+    for (int i = 0; i < P; ++i) {
+        if (a[i] != b[i]) {
+            printf("FAIL  %s  trial=%d  coeff[%d]  ref=%d  mine=%d\n",
+                   label, trial, i, (int)a[i], (int)b[i]);
+            return 0;
+        }
+    }
+    return 1;
+}
+
+/* ── tests ── */
+
+#define TRIALS 500
+
+static int test_Rq_mult_small(void) {
+    int passed = 0;
+    for (int t = 0; t < TRIALS; ++t) {
+        Fq f[P], h_ref[P], h_mine[P];
+        F3 g[P];
+
+        rand_Fq_poly(f);
+        rand_F3_poly(g);
+
+        Rq_mult_small_ref (h_ref,  f, g);
+        Rq_mult_small_mine(h_mine, f, g); /* CALL YOUR Rq_mult_small HERE */
+
+        if (cmp_Fq(h_ref, h_mine, "Rq_mult_small", t))
+            ++passed;
+        else
+            return 0; /* stop on first mismatch for easier debugging */
+    }
+    printf("PASS  Rq_mult_small  (%d/%d trials)\n", passed, TRIALS);
+    return 1;
+}
+
+static int test_R3_mult(void) {
+    int passed = 0;
+    for (int t = 0; t < TRIALS; ++t) {
+        F3 f[P], g[P], h_ref[P], h_mine[P];
+
+        rand_F3_poly(f);
+        rand_F3_poly(g);
+
+        R3_mult_ref (h_ref,  f, g);
+        R3_mult_mine(h_mine, f, g); /* CALL YOUR R3_mult HERE */
+
+        if (cmp_F3(h_ref, h_mine, "R3_mult", t))
+            ++passed;
+        else
+            return 0;
+    }
+    printf("PASS  R3_mult  (%d/%d trials)\n", passed, TRIALS);
+    return 1;
+}
+
+/* edge-case: multiply by zero polynomial */
+static int test_zero_poly(void) {
+    Fq f[P], h_ref[P], h_mine[P];
+    F3 g[P], fg_ref[P], fg_mine[P];
+
+    rand_Fq_poly(f);
+    memset(g, 0, sizeof g);
+
+    Rq_mult_small_ref (h_ref,  f, g);
+    Rq_mult_small_mine(h_mine, f, g); /* CALL YOUR Rq_mult_small HERE */
+    if (!cmp_Fq(h_ref, h_mine, "Rq_mult_small zero-g", 0)) return 0;
+
+    rand_F3_poly((F3*)f); /* reuse buffer as F3 */
+    memset(g, 0, sizeof g);
+
+    R3_mult_ref ((F3*)fg_ref,  (F3*)f, g);
+    R3_mult_mine((F3*)fg_mine, (F3*)f, g); /* CALL YOUR R3_mult HERE */
+    if (!cmp_F3(fg_ref, fg_mine, "R3_mult zero-g", 0)) return 0;
+
+    printf("PASS  zero-polynomial edge cases\n");
+    return 1;
 }
 
 #endif
@@ -475,7 +587,11 @@ int main() {
     #endif
 
     #ifdef POLYMULT
-
+    int ok = 1;
+    ok &= test_Rq_mult_small();
+    ok &= test_R3_mult();
+    ok &= test_zero_poly();
+    return ok ? 0 : 1;
 
     #endif
 
