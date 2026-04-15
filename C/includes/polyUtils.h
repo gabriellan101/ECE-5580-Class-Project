@@ -62,6 +62,13 @@ static int isValidPoly(F3 *x);
 
 static void reconstruct(F3 *out, static int valid, static F3 *in);
 
-#include "../sources/polyUtils.c"
+// rounds the coefficients of the input polynomial to the nearest element in R3, which is used in the decryption process to recover the message
+static void roundR3(Fq *out, const Fq *in) {
+    for (int i = 0; i < P; i++) out[i] = in[i] - F3_mod(in[i]);
+}
+
+static int isValidPoly(F3 *x);
+
+static void reconstruct(F3 *out, static int valid, static F3 *in);
 
 #endif
