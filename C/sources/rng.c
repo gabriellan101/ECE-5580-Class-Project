@@ -5,7 +5,7 @@
 */
 
 #include <string.h>
-#include "rng.h"
+#include "../includes/rng.h"
 #include <openssl/conf.h>
 #include <openssl/evp.h>
 #include <openssl/err.h>

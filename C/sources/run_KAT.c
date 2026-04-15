@@ -1,8 +1,8 @@
 //gcc rng.c run_KAT.c -I"../includes" -Iopenssl_files -Lopenssl_files -llibcrypto-3-x64 -o test.exe
 //^ add c files as test expands
-#include "KAT_rng.h"
+#include "../includes/KAT_rng.h"
 #include <stdio.h>
-
+#include "../includes/OuterLayer.h"
 #define KATNUM 1
 #define SEED_LENGTH 10
 
@@ -41,11 +41,12 @@ int main() {
     }
 
     for(int i = 0; i < KATNUM; i++) {
-        /**
-         * 1) Generate Keypair
-         * 2) Compare public and secret key to expected values
-         * 3) rest of KAT?
-         */
-
+        //OuterKeyGen(pk, sk);
+        for(int pi = 0; pi < 6; pi++) {
+            printf("%i", pk[i]);
+        }
+        for(int pi = 0; pi < 6; pi++) {
+            printf("%i", sk[i]);
+        }
     }
 }
