@@ -45,6 +45,21 @@ void R3Mult(int * f, int f_length, int * g, int g_length, int * h, int h_length)
     free(h_temp);
 }
 
+int mod3Centered(int x) {
+    return ((x + 1) % 3) - 1;
+}
 
+
+void keyGenMult(int *f, int *g, int * h) {
+    for(int i = 0; i < 2*P-1; i++) {
+        h[i] = 0;
+    }
+    for(int fi = 0; fi < P; fi++) {
+        for(int gi = 0; gi < P; gi++) {
+            h[fi+gi] = mod3Centered(h[fi+gi]+f[fi]*g[gi]);
+        }
+    }
+    polyMultReduce(h, 2*P-1, P);
+}
 #endif
 
