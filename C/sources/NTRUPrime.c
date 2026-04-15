@@ -53,7 +53,7 @@ static void Encrypt(Fq *c, const F3 *r, const Fq *h) {
     3: Multiply past result by Ginv in R/3
     4: construct small polynomial 
 */
-static void Decrypt(F3 *r, const Fq *c, const F3 *ginv, const F3 f) {
+static void Decrypt(F3 *out, const Fq *c, const F3 *f, const F3 *ginv) {
     Fq cf[P], cf3[P];
     F3 e[P], ev[P];
     int valid;
@@ -64,5 +64,5 @@ static void Decrypt(F3 *r, const Fq *c, const F3 *ginv, const F3 f) {
     F3F3_mult(ev, e, ginv);
     valid = isValidPoly(ev);
 
-    reconstruct(r, valid, ev);
+    reconstruct(out, valid, ev);
 }
