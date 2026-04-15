@@ -69,13 +69,20 @@ static void OuterDecrypt(F3 *r, const unsigned char *CT, const unsigned char *sk
 }
 
 static void Encap(unsigned char *CT, unsigned char *k, const unsigned char *pk){
+  F3 r[P];
+  unsigned char r_enc[Inputs_bytes];
+  unsigned char cache[Hash_bytes];
 
+  Hash_prefix(cache,4,pk,PublicKeys_bytes);
+  Inputs_random(r);
+  Hide(c,r_enc,r,pk,cache);
+  HashSession(k,1,r_enc,c);
 
 }
 
 static void Decap(unsigned char *k, const unsigned char *CT, const unsigned char *sk){
 
-  
+
 }
 
 
