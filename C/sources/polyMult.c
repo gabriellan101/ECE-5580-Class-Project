@@ -44,7 +44,7 @@ void R3Mult(int * f, int f_length, int * g, int g_length, int * h, int h_length)
 }
 
 
-void keyGenMult(Fq *f, F3 *g, Fq * h) {
+void keyGenMult(Fq *f, Fq *g, Fq * h) {
     for(int i = 0; i < 2*P-1; i++) {
         h[i] = 0;
     }

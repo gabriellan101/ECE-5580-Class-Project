@@ -11,19 +11,26 @@ Steps for key generation:
 5: (implicit based on function definition) Output public key H and secret key (F, G^-1)
 */
 static void KeyGen(Fq *h, F3 *f, F3 *ginv) {
-    F3 g[P];
+    Fq g[P];
     Fq finv[P];
-    
+    F3 g3[P];
 
     // loop breaks upon finding an invertible G, which is guaranteed to happen with high probability
     while (true) {
         // step 1
         makeGPoly(g);
-        if (R3_inv(ginv, g) == 0) { // step 1a
+        
+        for(int i = 0; i < P; i++) {
+            g3[i] = g[i];
+        }
+        if (R3_inv(ginv, g3) == 0) { // step 1a
             break;
         }
     }
-
+    Fq gq[P];
+    for(int i = 0; i < P; i++) {
+        gq[i] = g[i];
+    }
     // step 2
     Short_random(f);
     // step 3
