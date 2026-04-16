@@ -154,3 +154,19 @@ void Decode(const unsigned char *encoded, const uint16_t *M,long long len, uint1
       decoded[i] = R[i];
     }
 }
+
+static void R3_decode(F3 *f,const unsigned char *s)
+{
+  unsigned char x;
+  int i;
+
+  for (i = 0;i < P/4;++i) {
+    x = *s++;
+    *f++ = ((F3)(x&3))-1; x >>= 2;
+    *f++ = ((F3)(x&3))-1; x >>= 2;
+    *f++ = ((F3)(x&3))-1; x >>= 2;
+    *f++ = ((F3)(x&3))-1;
+  }
+  x = *s++;
+  *f++ = ((F3)(x&3))-1;
+}

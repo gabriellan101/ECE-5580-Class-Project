@@ -140,7 +140,7 @@ static void Decap(unsigned char *k, const unsigned char *CT, const unsigned char
   CT += Ciphertexts_bytes; // adjust pointer value to next segment
   HashConfirm(ctnew,r_prime,pk,cache);
 
-  int matching = confirm(CT, ctnew); // write function to compare these
+  int matching = confirm(CT, ctnew);
 
   for(int i = 0; i < Inputs_bytes; i++){
     if(matching == -1) r_prime[i] = rho[i];
