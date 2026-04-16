@@ -34,7 +34,7 @@ static int isValidPoly(F3 *x) {
     return isNonZero(count - W);
 }
 
-static void reconstruct(F3 *out, static int valid, static F3 *in){
+static void reconstruct(F3 *out, int valid, F3 *in){
     for (int i = 0; i < P; i++){
         if (valid == 0) out[i] = in[i];
         else if (i < W) out[i] = 1;
