@@ -2,7 +2,7 @@
 //^ add c files as test expands
 #include "../includes/KAT_rng.h"
 #include <stdio.h>
-#include "../includes/OuterLayer.h"
+//#include "../includes/OuterLayer.h"
 #define KATNUM 1
 #define SEED_LENGTH 10
 
