@@ -40,6 +40,10 @@ static void Decap(unsigned char *k, const unsigned char *CT, const unsigned char
 
 static int confirm(const unsigned char *ct, const unsigned char *ct2);
 
+static void Rounded_encode(unsigned char *s,const Fq *r);
+
+static void Rounded_decode(Fq *r,const unsigned char *s);
+
 /*
 Hash functions from reference implementation below this line
 */

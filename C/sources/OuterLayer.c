@@ -30,8 +30,9 @@ encodeR3(sk, ginv);
 
 /*
 This function is a wrapper on OuterKeyGen that adds hash function usage - specifically hash prefix
+This function is also the one that gets called for real usage, it is a wrapper on OuterKeyGen
 Full secret key layout after this function:
-sk[ 0 .. 381  ]  → Small_encode(f)[191] ; Small_encode(ginv) [191]  (ZKeyGen output)
+sk[ 0 .. 381  ]  → Small_encode(f)[191] ; Small_encode(ginv) [191]  (OuterKeyGen output)
 sk[ 382 .. 1539]  → copy of pk                          (for decap verification)
 sk[1540 .. 1571]  → random seed  (rho)                  (implicit rejection)
 sk[1572 .. ?  ]  → Hash_prefix(pk)                      (cached hash)
@@ -57,6 +58,12 @@ static void OuterEncrypt(unsigned char *CT, const F3 *r, const unsigned char *pk
   encode_rounded(CT, ct);
 }
 
+/*
+Outer level decryption steps:
+1: decode each segment of the secret key
+2: decode into a rounded polynomial
+3: Core decryption function
+*/
 static void OuterDecrypt(F3 *r, const unsigned char *CT, const unsigned char *sk){
   F3 f[P], ginv[P];
   Fq ct[P];
@@ -82,6 +89,29 @@ static void Encap(unsigned char *CT, unsigned char *k, const unsigned char *pk){
   HashConfirm(CT,r_prime,pk,cache);
 
   HashSession(k,1,r_prime,CT);
+}
+
+/* ----- encoding rounded polynomials */
+// These encoding algorithms are from the reference implementation
+
+static void Rounded_encode(unsigned char *s,const Fq *r)
+{
+  uint16_t R[P],M[P];
+  int i;
+
+  for (i = 0;i < P;++i) R[i] = ((r[i]+adj)*10923)>>15;
+  for (i = 0;i < P;++i) M[i] = (Q+2)/3;
+  Encode(s,R,M,P);
+}
+
+static void Rounded_decode(Fq *r,const unsigned char *s)
+{
+  uint16_t R[P],M[P];
+  int i;
+
+  for (i = 0;i < P;++i) M[i] = (Q+2)/3;
+  Decode(R,s,M,P);
+  for (i = 0;i < P;++i) r[i] = R[i]*3-adj;
 }
 
 /*
