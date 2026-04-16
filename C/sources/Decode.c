@@ -16,10 +16,19 @@ Steps:
 void Decode(const unsigned char *encoded, const uint16_t *M,long long len, uint16_t *decoded)
 {
     // working buffer for decoded val
-    uint16_t R[len];
+    //uint16_t R[len];
     // need buffer that we can modify --> M const 
     // buffer for moduli (non constant)
-    uint16_t Mbuf[len]; 
+    //uint16_t Mbuf[len]; 
+    uint16_t *R = malloc(len * sizeof(uint16_t));
+    uint16_t *Mbuf = malloc(len * sizeof(uint16_t));
+
+    if (!R || !Mbuf)
+    {
+      free(R);
+      free(Mbuf);
+      return;
+    }
     // index 
     long long i;
     //current length -- number of values 

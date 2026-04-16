@@ -27,7 +27,7 @@ void Encode( const uint16_t *R, const uint16_t *M, long long len, unsigned char 
             *encoded = (unsigned char) r;
             // shift for byte emitted 
             r >>= 8;
-             // need to advance location of output 
+            // need to advance location of output 
             encoded++; // moving pointer 
             // calculating upper bound of mod divided by 256 
             m = (m + 255) >> 8;
