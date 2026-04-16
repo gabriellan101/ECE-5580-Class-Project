@@ -7,7 +7,6 @@ Steps in outer layer key generation:
 3. Encode f and ginv into secret key
 Steps 2 and 3 represent "encode K as a string K' in the public key space"
 and "encode k as a string k' in the secret key space"
-
 The encode functions were not in the scope of the project and were copied from the reference implementation 
 for consistency between our implementation and the reference 
 */
