@@ -41,7 +41,7 @@ static void KeyGen(Fq *h, F3 *f, F3 *ginv) {
 */
 static void Encrypt(Fq *c, const F3 *r, const Fq *h) {
     Fq h1[P];
-    FqF3_mult(h1, h, r); // replace with our mult funciton
+    keyGenMult(h, r, h1); 
     roundR3(c, h1);
 }
 
@@ -58,10 +58,10 @@ static void Decrypt(F3 *out, const Fq *c, const F3 *f, const F3 *ginv) {
     F3 e[P], ev[P];
     int valid;
 
-    FqF3_mult(cf, c, f); // replace
+    keyGenMult(f, c, cf);
     Rq_scale3(cf3, cf);
     Rq_reduceR3(e, cf3);
-    F3F3_mult(ev, e, ginv);
+    R3Mult(e, P, ginv, P, ev, P);
     valid = isValidPoly(ev);
 
     reconstruct(out, valid, ev);

@@ -69,6 +69,8 @@ static void roundR3(Fq *out, const Fq *in) {
 
 static int isValidPoly(F3 *x);
 
-static void reconstruct(F3 *out, static int valid, static F3 *in);
+static void reconstruct(F3 *out, const int valid, const F3 *in);
+
+#include "../sources/polyUtils.c"
 
 #endif

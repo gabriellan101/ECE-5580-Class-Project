@@ -6,7 +6,8 @@
 #include "../includes/polyArith.h"
 #include <string.h>
 #include <time.h>
-#include "polyMult.h"
+#include "../includes/polyMult.h"
+#include "../includes/NTRUPrime.h"
 
 #define Q 4591
 #define adj ((Q-1)/2)
