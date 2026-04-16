@@ -97,3 +97,22 @@ void Encode( const uint16_t *R, const uint16_t *M, long long len, unsigned char 
 
     
 }
+
+/* these are the only functions that rely on p mod 4 = 1 */
+
+static void Small_encode(unsigned char *s,const small *f)
+{
+  small x;
+  int i;
+
+  for (i = 0;i < p/4;++i) {
+    x = *f++ + 1;
+    x += (*f++ + 1)<<2;
+    x += (*f++ + 1)<<4;
+    x += (*f++ + 1)<<6;
+    *s++ = x;
+  }
+  x = *f++ + 1;
+  *s++ = x;
+}
+
