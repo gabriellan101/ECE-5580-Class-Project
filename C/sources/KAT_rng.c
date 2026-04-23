@@ -19,7 +19,7 @@ void makeGPoly(Fq * g) {
 }
 
 
-static void Short_random(int8_t *out)
+void Short_random(int8_t *out)
 {
   uint32_t L[P];
   int i;
@@ -28,7 +28,7 @@ static void Short_random(int8_t *out)
   Short_fromlist(out,L);
 }
 
-static void Short_fromlist(int8_t *out,const uint32_t *in)
+void Short_fromlist(int8_t *out,const uint32_t *in)
 {
   uint32_t L[P];
   int i;
@@ -58,7 +58,7 @@ void crypto_sort_uint32(uint32_t *x,int n)
   }
 }
 
-static void minmax(uint32_t *x,uint32_t *y)
+void minmax(uint32_t *x,uint32_t *y)
 {
   uint32_t xi = *x;
   uint32_t yi = *y;

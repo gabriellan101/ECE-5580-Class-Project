@@ -37,7 +37,7 @@ static void KeyGen(Fq *h, F3 *f, F3 *ginv) {
     Rq3_inv(finv, f); // always works
     
     // step 4
-    keyGenMult(finv, g, h);    // replace with our mult function instead of placeholder
+    keyGenMult(finv, g, h);
 }
 
 /*

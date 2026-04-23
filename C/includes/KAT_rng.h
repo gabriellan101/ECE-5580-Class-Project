@@ -14,19 +14,19 @@
 /**
  * Generates the bytes used for creating the g polynomial
  */
-static uint32_t urandom32(void);
+uint32_t urandom32(void);
 /**
  * Generates g, a small polynomial in R
  */
 void makeGPoly(Fq * g);
 
 
-static void Short_random(int8_t *out);
+void Short_random(int8_t *out);
 
-static void Short_fromlist(int8_t *out,const uint32_t *in);
+void Short_fromlist(int8_t *out,const uint32_t *in);
 
 void crypto_sort_uint32(uint32_t *x,int n);
 
-static void minmax(uint32_t *x,uint32_t *y);
+void minmax(uint32_t *x,uint32_t *y);
 
 #endif
