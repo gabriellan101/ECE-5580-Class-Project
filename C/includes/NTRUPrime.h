@@ -3,9 +3,9 @@
 
 #include "Types.h"
 #include "polyArith.h"
-#include "randombytes.h"
 #include "polyUtils.h"
 #include "polyMult.h"
+#include "KAT_rng.h"
 
 /*
 This file defines functions used in the inner layer of the streamlined NTRUPrime core
@@ -15,8 +15,8 @@ such as Encrypt(), which only consists of three lines, but the complexity comes 
 */
 
 static void KeyGen(Fq *h, F3 *f, F3 *ginv);
-static void Encrypt(Fq *c, const F3 *r, const Fq *h);
-static void Decrypt(F3 *out, const Fq *c, const F3 *f, const F3 *ginv);
+static void Encrypt(Fq *c, F3 *r, Fq *h);
+static void Decrypt(F3 *out, Fq *c, F3 *f, F3 *ginv);
 
 
 #endif

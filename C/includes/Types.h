@@ -44,6 +44,4 @@ static inline int8_t F3_mod(int32_t x) {
 static void Rq_reduceR3(F3 *out, const Fq *in);
 
 
-#include "../sources/Types.c"
-
 #endif

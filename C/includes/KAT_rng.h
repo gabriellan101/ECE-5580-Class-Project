@@ -8,17 +8,17 @@
 #ifndef KAT_RNG
 #define KAT_RNG
 #include "Types.h"
-//#include "polyUtils.h"
+#include "polyUtils.h"
 #include "rng.h"
 
 /**
  * Generates the bytes used for creating the g polynomial
  */
-uint32_t urandom32(void);
+static uint32_t urandom32(void);
 /**
  * Generates g, a small polynomial in R
  */
-void makeGPoly(Fq * g);
+void makeGPoly(F3 * g);
 
 
 void Short_random(int8_t *out);

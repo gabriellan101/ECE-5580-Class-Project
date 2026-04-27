@@ -1,5 +1,5 @@
 #include "../includes/NTRUPrime.h"
-#include "../includes/KAT_rng.h"
+//#include "../includes/KAT_rng.h"
 
 /*
 Steps for key generation:
@@ -11,26 +11,19 @@ Steps for key generation:
 5: (implicit based on function definition) Output public key H and secret key (F, G^-1)
 */
 static void KeyGen(Fq *h, F3 *f, F3 *ginv) {
-    Fq g[P];
+    F3 g[P];
     Fq finv[P];
-    F3 g3[P];
 
     // loop breaks upon finding an invertible G, which is guaranteed to happen with high probability
     while (true) {
         // step 1
         makeGPoly(g);
         
-        for(int i = 0; i < P; i++) {
-            g3[i] = g[i];
-        }
-        if (R3_inv(ginv, g3) == 0) { // step 1a
+        if (R3_inv(ginv, g) == 0) { // step 1a
             break;
         }
     }
-    Fq gq[P];
-    for(int i = 0; i < P; i++) {
-        gq[i] = g[i];
-    }
+    
     // step 2
     Short_random(f);
     // step 3
@@ -46,7 +39,7 @@ static void KeyGen(Fq *h, F3 *f, F3 *ginv) {
     H: Public key in Rq
     C: Ciphertext in Rq - should be blank to start, and will be overwritten with the output of the encryption function
 */
-static void Encrypt(Fq *c, const F3 *r, const Fq *h) {
+static void Encrypt(Fq *c, F3 *r, Fq *h) {
     Fq h1[P];
     keyGenMult(h, r, h1); 
     roundR3(c, h1);
@@ -60,12 +53,12 @@ static void Encrypt(Fq *c, const F3 *r, const Fq *h) {
     3: Multiply past result by Ginv in R/3
     4: construct small polynomial 
 */
-static void Decrypt(F3 *out, const Fq *c, const F3 *f, const F3 *ginv) {
+static void Decrypt(F3 *out, Fq *c, F3 *f, F3 *ginv) {
     Fq cf[P], cf3[P];
     F3 e[P], ev[P];
     int valid;
 
-    keyGenMult(f, c, cf);
+    keyGenMult(c, f, cf);
     Rq_scale3(cf3, cf);
     Rq_reduceR3(e, cf3);
     R3Mult(e, P, ginv, P, ev, P);

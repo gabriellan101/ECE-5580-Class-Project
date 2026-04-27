@@ -14,7 +14,7 @@ static uint32_t urandom32(void)
   return out[0]+out[1]+out[2]+out[3];
 }
 
-void makeGPoly(Fq * g) {
+void makeGPoly(F3 * g) {
     for (int i = 0;i < P;++i) g[i] = (((urandom32()&0x3fffffff)*3)>>30)-1;
 }
 

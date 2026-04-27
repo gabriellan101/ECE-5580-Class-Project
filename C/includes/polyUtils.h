@@ -61,6 +61,8 @@ static void roundR3(Fq *out, const Fq *in) {
 */
 int isValidPoly(F3 *x);
 
+void Rq_scale3(Fq *out, const Fq *in);
+
 void reconstruct(F3 *out, int valid, F3 *in);
 
 // rounds the coefficients of the input polynomial to the nearest element in R3, which is used in the decryption process to recover the message
