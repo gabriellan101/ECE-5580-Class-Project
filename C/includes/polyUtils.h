@@ -21,37 +21,15 @@ void RqtoR3(F3 *out,const Fq *in);
 /**
  * checks if the given polynomial is small (all coefficient are -1, 0, or 1)
  */
-bool isSmall(int * f, int f_length) {
-    for(int i = 0; i < f_length; i++) {
-        if(f[i] > 1) 
-            return false;
-        if(f[i] < -1)
-            return false;
-    }
-    return true;
-}
+bool isSmall(int * f, int f_length);
 /*
  * Checks if the given polynomial is t-small (over 2t coefficients are -1, 0, 1, where 2t = w)
  */
-bool isTSmall(int * f, int f_length) {
-    int bigCount = 0;
-    for(int i = 0; i < f_length; i++) {
-        if(f[i] > 1) 
-            bigCount++;
-        if(f[i] < -1)
-            bigCount++;
-    }
-    return (bigCount > W) ? false: true;
-}
-
+bool isTSmall(int * f, int f_length);
 // following two functions are used to track invertibilty of polynomials in both inverse functions
-int isNonZero(int16_t f){
-    return (f != 0) ? -1 : 0;
-}
+int isNonZero(int16_t f);
 
-int isNegative(int16_t f){
-    return (f < 0) ? -1 : 0;
-}
+int isNegative(int16_t f);
 
 // rounds the coefficients of the input polynomial to the nearest element in R3, which is used in the decryption process to recover the message
 /*
@@ -66,10 +44,7 @@ void Rq_scale3(Fq *out, const Fq *in);
 void reconstruct(F3 *out, int valid, F3 *in);
 
 // rounds the coefficients of the input polynomial to the nearest element in R3, which is used in the decryption process to recover the message
-void roundR3(Fq *out, const Fq *in) {
-    for (int i = 0; i < P; i++) out[i] = in[i] - F3_mod(in[i]);
-}
-
+void roundR3(Fq *out, const Fq *in);
 int isValidPoly(F3 *x);
 
 #endif

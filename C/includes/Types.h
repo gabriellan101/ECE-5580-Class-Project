@@ -41,7 +41,7 @@ static inline int8_t F3_mod(int32_t x) {
 }
 
 // Rq -> R3 reduction function used in decryption process
-static void Rq_reduceR3(F3 *out, const Fq *in);
+void Rq_reduceR3(F3 *out, const Fq *in);
 
 
 #endif

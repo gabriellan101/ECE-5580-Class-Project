@@ -15,6 +15,40 @@ Fq Fq_recip(Fq x) {
     return result;
 }
 
+bool isSmall(int * f, int f_length) {
+    for(int i = 0; i < f_length; i++) {
+        if(f[i] > 1) 
+            return false;
+        if(f[i] < -1)
+            return false;
+    }
+    return true;
+}
+
+bool isTSmall(int * f, int f_length) {
+    int bigCount = 0;
+    for(int i = 0; i < f_length; i++) {
+        if(f[i] > 1) 
+            bigCount++;
+        if(f[i] < -1)
+            bigCount++;
+    }
+    return (bigCount > W) ? false: true;
+}
+
+int isNonZero(int16_t f){
+    return (f != 0) ? -1 : 0;
+}
+
+int isNegative(int16_t f){
+    return (f < 0) ? -1 : 0;
+}
+
+void roundR3(Fq *out, const Fq *in) {
+    for (int i = 0; i < P; i++) out[i] = in[i] - F3_mod(in[i]);
+}
+
+
 void RqtoR3(F3 *out, const Fq *in) {
     for (int i = 0; i < P; i++) {
         out[i] = F3_mod(in[i]);
