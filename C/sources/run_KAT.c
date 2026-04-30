@@ -2,7 +2,7 @@
 //^ add c files as test expands
 #include "../includes/KAT_rng.h"
 #include <stdio.h>
-//#include "../includes/OuterLayer.h"
+#include "../includes/OuterLayer.h"
 #define KATNUM 1
 #define SEED_LENGTH 10
 
@@ -21,32 +21,50 @@ int main() {
     unsigned char *pk = 0;
     unsigned char *sk = 0;
 
-    FILE * seed_file = fopen("seeds.txt", "r");
-    char buffer[1028];
-    int len = SEED_LENGTH;
-
-    fgets(buffer, len, seed_file);
-
-    printf(buffer);
-
     for (i=0; i<48; i++)
         entropy_input[i] = i;
     randombytes_init(entropy_input, NULL, 256);
 
     for (i=0; i<KATNUM; i++)
         randombytes(seed[i], 48);
+    printf(&seed);
+        /*
+    fp_req = fdopen(8, "w");
+    if (!fp_req)
+        return -1;
 
-    for(int i = 0; i < 48; i++) {
-        printf("%i\n", seed[0][i]);
-    }
+    for (i=0; i<KATNUM; i++) {
 
-    for(int i = 0; i < KATNUM; i++) {
-        //OuterKeyGen(pk, sk);
-        for(int pi = 0; pi < 6; pi++) {
-            printf("%i", pk[i]);
+        randombytes_init(seed[i], NULL, 256);
+
+        //fprintf(fp_rsp, "count = %d\n", i);
+        //fprintBstr(fp_rsp, "seed = ", seed[i], 48);
+        
+        if ( (ret_val = OuterKeygen(pk, sk)) != 0) {
+            printf("crypto_kem_keypair returned wrong\n");
+            return -1;
         }
-        for(int pi = 0; pi < 6; pi++) {
-            printf("%i", sk[i]);
+        /*
+        if ( (ret_val = crypto_kem_enc(ct, ss, pk)) != 0) {
+            fprintf(stderr, "crypto_kem_enc returned <%d>\n", ret_val);
+            return KAT_CRYPTO_FAILURE;
         }
+        fprintBstr(fp_rsp, "ct = ", ct, crypto_kem_CIPHERTEXTBYTES);
+        fprintBstr(fp_rsp, "ss = ", ss, crypto_kem_BYTES);
+        
+        fprintf(fp_rsp, "\n");
+        
+        if ( (ret_val = crypto_kem_dec(ss1, ct, sk)) != 0) {
+            fprintf(stderr, "crypto_kem_dec returned <%d>\n", ret_val);
+            return KAT_CRYPTO_FAILURE;
+        }
+        
+        if ( memcmp(ss, ss1, crypto_kem_BYTES) ) {
+            fprintf(stderr, "crypto_kem_dec returned bad 'ss' value\n");
+            return KAT_CRYPTO_FAILURE;
+        }
+        
     }
+*/
+    return 0;
 }

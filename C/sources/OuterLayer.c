@@ -11,13 +11,12 @@ The encode functions were not in the scope of the project and were copied from t
 for consistency between our implementation and the reference 
 */
 static void OuterKeyGen(unsigned char *pk, unsigned char *sk){
-Fq h[P];
-F3 f[P], ginv[P];
-
-keyGen(h, f, ginv);
-encodeRq(pk, h);
-encodeR3(sk, f);
-sk += Small_bytes; // this line bumps the pointer of the secret key to the starting point of where ginv should be
+  Fq h[P];
+  F3 f[P], ginv[P];
+  KeyGen(h, f, ginv);
+  encodeRq(pk, h);
+  encodeR3(sk, f);
+  sk += Small_bytes; // this line bumps the pointer of the secret key to the starting point of where ginv should be
 /*
 sk -> [f encoded (191 bytes)][ginv encoded (191 bytes)]
                             ^pointer needs to be here to not overwrite f encoding
