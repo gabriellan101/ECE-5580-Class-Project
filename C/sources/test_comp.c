@@ -4,6 +4,6 @@
 //#include "../includes/rng.h"
 #include "../includes/NTRUPrime.h"
 int main() {
-    printf("done\n");
+    printf("done1\n");
     return 0;
 }
