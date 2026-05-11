@@ -14,7 +14,7 @@
 /**
  * Generates the bytes used for creating the g polynomial
  */
-static uint32_t urandom32(void);
+uint32_t urandom32(void);
 /**
  * Generates g, a small polynomial in R
  */
