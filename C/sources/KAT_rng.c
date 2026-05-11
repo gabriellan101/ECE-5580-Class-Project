@@ -1,7 +1,7 @@
 #include "../includes/KAT_rng.h"
 
 
-static uint32_t urandom32(void)
+uint32_t urandom32(void)
 {
   unsigned char c[4];
   uint32_t out[4];
