@@ -64,16 +64,21 @@ void R3Mult(F3 * f, int f_length, F3 * g, int g_length, F3 * h, int h_length) {
 
 
 void keyGenMult(Fq *f, F3 *g, Fq * h) {
+    Fq h_temp[2*P];
     for(int i = 0; i < 2*P-1; i++) {
-        h[i] = 0;
+        h_temp[i] = 0;
     }
+    
     for(int fi = 0; fi < P; fi++) {
         for(int gi = 0; gi < P; gi++) {
-            h[fi+gi] = Fq_mod(h[fi+gi]+f[fi]*g[gi]);
+            h_temp[fi+gi] = Fq_mod(h_temp[fi+gi]+f[fi]*g[gi]);
         }
     }
     for(int i = P; i < 2*P-1; i++) {
-        h[i-P] = Fq_mod(h[i-P] + h[i]);
-        h[i-P+1] = Fq_mod(h[i-P+1] + h[i+1]);
+        h_temp[i-P] = Fq_mod(h_temp[i-P] + h_temp[i]);
+        h_temp[i-P+1] = Fq_mod(h_temp[i-P+1] + h_temp[i+1]);
+    }
+    for(int i = 0; i < P; i++) {
+        h[i] = h_temp[i];
     }
 }
