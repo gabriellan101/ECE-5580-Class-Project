@@ -10,7 +10,7 @@ Steps for key generation:
 4: Compute H = F^-1 * G in Rq
 5: (implicit based on function definition) Output public key H and secret key (F, G^-1)
 */
-static void KeyGen(Fq *h, F3 *f, F3 *ginv) {
+void KeyGen(Fq *h, F3 *f, F3 *ginv) {
     F3 g[P];
     Fq finv[P];
 
@@ -39,7 +39,7 @@ static void KeyGen(Fq *h, F3 *f, F3 *ginv) {
     H: Public key in Rq
     C: Ciphertext in Rq - should be blank to start, and will be overwritten with the output of the encryption function
 */
-static void Encrypt(Fq *c, F3 *r, Fq *h) {
+void Encrypt(Fq *c, F3 *r, Fq *h) {
     Fq h1[P];
     keyGenMult(h, r, h1); 
     roundR3(c, h1);
@@ -53,7 +53,7 @@ static void Encrypt(Fq *c, F3 *r, Fq *h) {
     3: Multiply past result by Ginv in R/3
     4: construct small polynomial 
 */
-static void Decrypt(F3 *out, Fq *c, F3 *f, F3 *ginv) {
+void Decrypt(F3 *out, Fq *c, F3 *f, F3 *ginv) {
     Fq cf[P], cf3[P];
     F3 e[P], ev[P];
     int valid;

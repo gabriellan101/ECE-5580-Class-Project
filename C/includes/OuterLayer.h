@@ -24,25 +24,25 @@ Note - while working on this code I realized that Tame Impala sounds like Stewie
 */
 
 // This function handles pk and sk generation while 
-static void OuterKeyGen(unsigned char *pk, unsigned char *sk);
+void OuterKeyGen(unsigned char *pk, unsigned char *sk);
 
 // The following function calls the above function in the NTRUPrime process and the outputs are used for encap and decap
 // It is a wrapper on top of OuterKeyGen() that intefaces with the hash functions
-static void KEM_keygen(unsigned char *pk, unsigned char *sk);
+void KEM_keygen(unsigned char *pk, unsigned char *sk);
 
-static void OuterEncrypt(unsigned char *CT, const F3 r, const unsigned char *pk);
+void OuterEncrypt(unsigned char *CT, const F3 *r, const unsigned char *pk);
 
-static void OuterDecrypt(F3 *r, const unsigned char *CT, const unsigned char *sk);
+void OuterDecrypt(F3 *r, const unsigned char *CT, const unsigned char *sk);
 
-static void Encap(unsigned char *CT, unsigned char *k, const unsigned char *pk);
+void Encap(unsigned char *CT, unsigned char *k, const unsigned char *pk);
 
-static void Decap(unsigned char *k, const unsigned char *CT, const unsigned char *sk);
+void Decap(unsigned char *k, const unsigned char *CT, const unsigned char *sk);
 
-static int confirm(const unsigned char *ct, const unsigned char *ct2);
+int confirm(const unsigned char *ct, const unsigned char *ct2);
 
-static void Rounded_encode(unsigned char *s,const Fq *r);
+void encode_rounded(unsigned char *s,const Fq *r);
 
-static void Rounded_decode(Fq *r,const unsigned char *s);
+void decode_rounded(Fq *r,const unsigned char *s);
 
 /*
 Hash functions from reference implementation below this line
@@ -61,15 +61,15 @@ Hash functions from reference implementation below this line
 extern int crypto_hash_sha512(unsigned char *,const unsigned char *,unsigned long long);
 
 // I had to edit this function to remove errors
-static void Hash_prefix(unsigned char *out,int b,const unsigned char *in,int inlen);
+void Hash_prefix(unsigned char *out,int b,const unsigned char *in,int inlen);
 
 /* h = HashConfirm(r,pk,cache); cache is Hash4(pk) */
-static void HashConfirm(unsigned char *h,const unsigned char *r,const unsigned char *pk,const unsigned char *cache);
+void HashConfirm(unsigned char *h,const unsigned char *r,const unsigned char *pk,const unsigned char *cache);
 
 /* ----- session-key hash */
 
 /* k = HashSession(b,y,z) */
-static void HashSession(unsigned char *k,int b,const unsigned char *y,const unsigned char *z);
+void HashSession(unsigned char *k,int b,const unsigned char *y,const unsigned char *z);
 
 #include "../sources/OuterLayer.c"
 

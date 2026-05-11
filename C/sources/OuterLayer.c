@@ -10,7 +10,7 @@ and "encode k as a string k' in the secret key space"
 The encode functions were not in the scope of the project and were copied from the reference implementation 
 for consistency between our implementation and the reference 
 */
-static void OuterKeyGen(unsigned char *pk, unsigned char *sk){
+void OuterKeyGen(unsigned char *pk, unsigned char *sk){
   Fq h[P];
   F3 f[P], ginv[P];
   KeyGen(h, f, ginv);
@@ -35,21 +35,21 @@ sk[ 382 .. 1539]  → copy of pk                          (for decap verificatio
 sk[1540 .. 1571]  → random seed  (rho)                  (implicit rejection)
 sk[1572 .. ?  ]  → Hash_prefix(pk)                      (cached hash)
 */
-static void KEM_KeyGen(unsigned char *pk, unsigned char *sk) {
+void KEM_KeyGen(unsigned char *pk, unsigned char *sk) {
   OuterKeyGen(sk, pk);
   sk += SK_bytes; // increment sk pointer to start of next segment
   memcpy(sk, pk, PK_bytes);
   sk += PK_bytes;
   randombytes(sk, Inputs_bytes);
   sk += Inputs_bytes;
-  Hash_Prefix(sk,4,pk,PK_bytes);
+  Hash_prefix(sk,4,pk,PK_bytes);
 }
 
 /*
 This function is a wrapper on the core encryption function that takes the output of KEM_KeyGen()
 and adds encoding and ciphertext generation
 */
-static void OuterEncrypt(unsigned char *CT, const F3 *r, const unsigned char *pk){
+void OuterEncrypt(unsigned char *CT, const F3 *r, const unsigned char *pk){
   Fq h[P], ct[P];
   decodeRq(h, pk);
   Encrypt(ct, r, h);
@@ -62,7 +62,7 @@ Outer level decryption steps:
 2: decode into a rounded polynomial
 3: Core decryption function
 */
-static void OuterDecrypt(F3 *r, const unsigned char *CT, const unsigned char *sk){
+void OuterDecrypt(F3 *r, const unsigned char *CT, const unsigned char *sk){
   F3 f[P], ginv[P];
   Fq ct[P];
 
@@ -73,7 +73,7 @@ static void OuterDecrypt(F3 *r, const unsigned char *CT, const unsigned char *sk
   Decrypt(r, ct, f, ginv);
 }
 
-static void Encap(unsigned char *CT, unsigned char *k, const unsigned char *pk){
+void Encap(unsigned char *CT, unsigned char *k, const unsigned char *pk){
   F3 r[P];
   unsigned char r_prime[Inputs_bytes];
   unsigned char cache[Hash_bytes];
@@ -92,7 +92,7 @@ static void Encap(unsigned char *CT, unsigned char *k, const unsigned char *pk){
 /* ----- encoding rounded polynomials */
 // These encoding algorithms are from the reference implementation
 
-static void Rounded_encode(unsigned char *s,const Fq *r)
+void encode_rounded(unsigned char *s,const Fq *r)
 {
   uint16_t R[P],M[P];
   int i;
@@ -102,7 +102,7 @@ static void Rounded_encode(unsigned char *s,const Fq *r)
   Encode(s,R,M,P);
 }
 
-static void Rounded_decode(Fq *r,const unsigned char *s)
+void decode_rounded(Fq *r,const unsigned char *s)
 {
   uint16_t R[P],M[P];
   int i;
@@ -123,7 +123,7 @@ Decapsulation steps:
 7: if they don't match, replace r_prime with rho
 8: hash the output to produce the session key k
 */
-static void Decap(unsigned char *k, const unsigned char *CT, const unsigned char *sk){
+void Decap(unsigned char *k, const unsigned char *CT, const unsigned char *sk){
   const unsigned char *pk = sk + SK_bytes; // starting pointer to encapsulated public key
   const unsigned char *rho = pk + PK_bytes; // Pointer to random seed used for implicit rejection for confirmation step
   const unsigned char *cache = rho + Inputs_bytes; // pointer to hash prefix section of data
@@ -148,7 +148,7 @@ static void Decap(unsigned char *k, const unsigned char *CT, const unsigned char
   HashSession(k, 1+matching, r_prime, CT);
 }
 
-static int confirm(const unsigned char *ct, const unsigned char *ct2){
+int confirm(const unsigned char *ct, const unsigned char *ct2){
   
   for(int i = 0; i < (Ciphertexts_bytes+Confirm_bytes); i++){
     if (ct[i] != ct2[i]) return -1;
@@ -169,7 +169,7 @@ int crypto_hash_sha512(unsigned char *out,const unsigned char *in,unsigned long 
 }
 
 // This function had to be changed for variable initialization, added malloc() and free()
-static void Hash_prefix(unsigned char *out,int b,const unsigned char *in,int inlen)
+void Hash_prefix(unsigned char *out,int b,const unsigned char *in,int inlen)
 {
     unsigned char *x;
     unsigned char h[64];
@@ -186,7 +186,7 @@ static void Hash_prefix(unsigned char *out,int b,const unsigned char *in,int inl
     free(x);
 }
 
-static void HashConfirm(unsigned char *h,const unsigned char *r,const unsigned char *pk,const unsigned char *cache)
+void HashConfirm(unsigned char *h,const unsigned char *r,const unsigned char *pk,const unsigned char *cache)
 {
   unsigned char x[Hash_bytes*2];
   int i;
@@ -197,7 +197,7 @@ static void HashConfirm(unsigned char *h,const unsigned char *r,const unsigned c
   Hash_prefix(h,2,x,sizeof x);
 }
 
-static void HashSession(unsigned char *k,int b,const unsigned char *y,const unsigned char *z)
+void HashSession(unsigned char *k,int b,const unsigned char *y,const unsigned char *z)
 {
   unsigned char x[Hash_bytes+Ciphertexts_bytes+Confirm_bytes];
   int i;

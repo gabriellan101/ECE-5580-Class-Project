@@ -14,9 +14,9 @@ These functions are simple at a high level and share some aspects with the refer
 such as Encrypt(), which only consists of three lines, but the complexity comes from the helper functions.
 */
 
-static void KeyGen(Fq *h, F3 *f, F3 *ginv);
-static void Encrypt(Fq *c, F3 *r, Fq *h);
-static void Decrypt(F3 *out, Fq *c, F3 *f, F3 *ginv);
+void KeyGen(Fq *h, F3 *f, F3 *ginv);
+void Encrypt(Fq *c, F3 *r, Fq *h);
+void Decrypt(F3 *out, Fq *c, F3 *f, F3 *ginv);
 
 
 #endif
