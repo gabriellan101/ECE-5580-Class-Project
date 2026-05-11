@@ -10,7 +10,7 @@
 #include "polyMult.h"
 #include "polyUtils.h"
 #include <stdlib.h>
-#include "../test_package/openssl_files/openssl/sha.h"
+#include <openssl/sha.h>
 #include <stddef.h>
 #include <string.h>
 #include "../includes/rng.h"
