@@ -100,12 +100,12 @@ void Encode( const uint16_t *R, const uint16_t *M, long long len, unsigned char 
 
 /* these are the only functions that rely on p mod 4 = 1 */
 
-static void Small_encode(unsigned char *s,const small *f)
+static void encodeR3(unsigned char *s,const F3 *f)
 {
-  small x;
+  F3 x;
   int i;
 
-  for (i = 0;i < p/4;++i) {
+  for (i = 0;i < P/4;++i) {
     x = *f++ + 1;
     x += (*f++ + 1)<<2;
     x += (*f++ + 1)<<4;
@@ -116,3 +116,12 @@ static void Small_encode(unsigned char *s,const small *f)
   *s++ = x;
 }
 
+void encodeRq(unsigned char *s,const Fq *r)
+{
+  Fq R[P],M[P];
+  int i;
+  
+  for (i = 0;i < P;++i) R[i] = r[i]+adj;
+  for (i = 0;i < P;++i) M[i] = Q;
+  Encode(s,R,M,P);
+}
