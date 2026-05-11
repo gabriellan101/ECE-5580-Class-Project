@@ -164,7 +164,17 @@ void Decode(const unsigned char *encoded, const uint16_t *M,long long len, uint1
     }
 }
 
-static void R3_decode(F3 *f,const unsigned char *s)
+void Rq_decode(Fq *r,const unsigned char *s)
+{
+  Fq R[P],M[P];
+  int i;
+
+  for (i = 0;i < P;++i) M[i] = Q;
+  Decode(R,s,M,P);
+  for (i = 0;i < P;++i) r[i] = ((Fq)R[i])-adj;
+}
+
+void R3_decode(F3 *f,const unsigned char *s)
 {
   unsigned char x;
   int i;
