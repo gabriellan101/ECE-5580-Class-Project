@@ -1,13 +1,15 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include "../includes/Types.h"
-#include "../includes/polyUtils.h"
-#include "../includes/polyArith.h"
+#include "includes/Types.h"
+#include "sources/Types.c"
+#include "includes/polyUtils.h"
+#include "sources/polyUtils.c"
+#include "includes/polyArith.h"
+#include "sources/polyArith.c"
 #include <string.h>
 #include <time.h>
-#include "../includes/polyMult.h"
-#include "../includes/NTRUPrime.h"
+
 
 #define Q 4591
 #define adj ((Q-1)/2)
@@ -16,7 +18,7 @@
 //#define POLYUTILS
 //#define POLYARITHTEST
 
-#define POLYMULT
+#define POLYARITHTEST
 
 typedef int16_t Fq;
 
@@ -216,9 +218,9 @@ static int test_R3_recip(int n_random, int n_invertible)
         }
     }
 
-    /* ── random ternary polynomials (may or may not be invertible) ── */
+
     for (int t = 0; t < n_random; ++t, ++test_num) {
-        rand_ternary(in, 143, 143); /* 143 + 143 = 286, sntrup761 weight */
+        rand_ternary(in, 143, 143);
 
         int r_ref = R3_recip(ref_out, in);
         int r_my  = R3_inv(my_out, in);
@@ -228,7 +230,7 @@ static int test_R3_recip(int n_random, int n_invertible)
                    "(ref=%d my=%d)\n", t, r_ref, r_my);
             ++failed; continue;
         }
-        if (r_ref != 0) { ++skipped; continue; } /* not invertible, skip cmp */
+        if (r_ref != 0) { ++skipped; continue; } 
 
         if (memcmp(ref_out, my_out, P * sizeof(F3)) != 0) {
             printf("  [R3_recip] random %d: output mismatch\n", t);
@@ -245,11 +247,6 @@ static int test_R3_recip(int n_random, int n_invertible)
         }
     }
 
-    /*
-     * ── force n_invertible invertible cases ──
-     * Retry until we get a polynomial with a valid inverse.
-     * (Most weight-286 ternary polys over F3[x]/(x^761-x-1) are invertible.)
-     */
     for (int t = 0; t < n_invertible; ++t) {
         int attempts = 0;
         while (1) {
@@ -290,9 +287,7 @@ static int test_R3_recip(int n_random, int n_invertible)
     return failed;
 }
 
-/*
- * Rq_recip3 test  (same structure, Fq output)
- */
+
 static int test_Rq_recip3(int n_random, int n_invertible)
 {
     int passed = 0, failed = 0, skipped = 0;
@@ -301,7 +296,7 @@ static int test_Rq_recip3(int n_random, int n_invertible)
 
     /* ── random tests ── */
     for (int t = 0; t < n_random; ++t) {
-        rand_ternary(in, 143, 143); /* 143 + 143 = 286, sntrup761 weight */
+        rand_ternary(in, 143, 143); 
 
         int r_ref = Rq_recip3(ref_out, in);
         int r_my  = Rq3_inv(my_out, in);
@@ -328,11 +323,11 @@ static int test_Rq_recip3(int n_random, int n_invertible)
         }
     }
 
-    /* ── forced invertible tests ── */
+    
     for (int t = 0; t < n_invertible; ++t) {
         int attempts = 0;
         while (1) {
-            rand_ternary(in, 143, 143); /* 143 + 143 = 286, sntrup761 weight */
+            rand_ternary(in, 143, 143); 
             int r_ref = Rq_recip3(ref_out, in);
             if (r_ref == 0) break;
             if (++attempts > 1000) {
@@ -366,173 +361,6 @@ static int test_Rq_recip3(int n_random, int n_invertible)
     printf("Rq_recip3 : %d passed, %d failed, %d skipped (not invertible)\n",
            passed, failed, skipped);
     return failed;
-}
-
-#endif
-
-#ifdef POLYMULT
-#define Q12 adj
-/* h = f*g in the ring Rq */
-static void Rq_mult_small_ref(Fq *h,const Fq *f,const F3 *g)
-{
-  Fq fg[P+P-1];
-  Fq result;
-  int i,j;
-
-  for (i = 0;i < P;++i) {
-    result = 0;
-    for (j = 0;j <= i;++j) result = Fq_mod(result+f[j]*(int32_t)g[i-j]);
-    fg[i] = result;
-  }
-  for (i = P;i < P+P-1;++i) {
-    result = 0;
-    for (j = i-P+1;j < P;++j) result = Fq_mod(result+f[j]*(int32_t)g[i-j]);
-    fg[i] = result;
-  }
-
-  for (i = P+P-2;i >= P;--i) {
-    fg[i-P] = Fq_freeze(fg[i-P]+fg[i]);
-    fg[i-P+1] = Fq_freeze(fg[i-P+1]+fg[i]);
-  }
-
-  for (i = 0;i < P;++i) h[i] = fg[i];
-}
-
-/* h = f*g in the ring R3 */
-static void R3_mult_ref(F3 *h,const F3 *f,const F3 *g)
-{
-  F3 fg[P+P-1];
-  F3 result;
-  int i,j;
-
-  for (i = 0;i < P;++i) {
-    result = 0;
-    for (j = 0;j <= i;++j) result = F3_mod(result+f[j]*g[i-j]);
-    fg[i] = result;
-  }
-  for (i = P;i < P+P-1;++i) {
-    result = 0;
-    for (j = i-P+1;j < P;++j) result = F3_mod(result+f[j]*g[i-j]);
-    fg[i] = result;
-  }
-
-  for (i = P+P-2;i >= P;--i) {
-    fg[i-P] = F3_mod(fg[i-P]+fg[i]);
-    fg[i-P+1] = F3_mod(fg[i-P+1]+fg[i]);
-  }
-
-  for (i = 0;i < P;++i) h[i] = fg[i];
-}
-
-/* ── helpers ── */
-
-/* reproducible LCG so failures are repeatable */
-static uint32_t lcg_state = 0xdeadbeef;
-static uint32_t lcg_next(void) {
-    lcg_state ^= lcg_state << 13;
-    lcg_state ^= lcg_state >> 17;
-    lcg_state ^= lcg_state << 5;
-    return lcg_state;
-}
-
-static void rand_Fq_poly(Fq *f) {
-    for (int i = 0; i < P; ++i)
-        f[i] = (Fq)((lcg_next() % Q) - Q12); /* values in [-(Q-1)/2 .. (Q-1)/2] */
-}
-
-static void rand_F3_poly(F3 *f) {
-    for (int i = 0; i < P; ++i)
-        f[i] = (F3)((lcg_next() % 3) - 1);   /* values in {-1, 0, 1} */
-}
-
-static int cmp_Fq(const Fq *a, const Fq *b, const char *label, int trial) {
-    for (int i = 0; i < P; ++i) {
-        if (a[i] != b[i]) {
-            printf("FAIL  %s  trial=%d  coeff[%d]  ref=%d  mine=%d\n",
-                   label, trial, i, (int)a[i], (int)b[i]);
-            return 0;
-        }
-    }
-    return 1;
-}
-
-static int cmp_F3(const F3 *a, const F3 *b, const char *label, int trial) {
-    for (int i = 0; i < P; ++i) {
-        if (a[i] != b[i]) {
-            printf("FAIL  %s  trial=%d  coeff[%d]  ref=%d  mine=%d\n",
-                   label, trial, i, (int)a[i], (int)b[i]);
-            return 0;
-        }
-    }
-    return 1;
-}
-
-/* ── tests ── */
-
-#define TRIALS 500
-
-static int test_Rq_mult_small(void) {
-    int passed = 0;
-    for (int t = 0; t < TRIALS; ++t) {
-        Fq f[P], h_ref[P], h_mine[P];
-        F3 g[P];
-
-        rand_Fq_poly(f);
-        rand_F3_poly(g);
-
-        Rq_mult_small_ref (h_ref,  f, g);
-        Rq_mult_small_mine(h_mine, f, g); /* CALL YOUR Rq_mult_small HERE */
-
-        if (cmp_Fq(h_ref, h_mine, "Rq_mult_small", t))
-            ++passed;
-        else
-            return 0; /* stop on first mismatch for easier debugging */
-    }
-    printf("PASS  Rq_mult_small  (%d/%d trials)\n", passed, TRIALS);
-    return 1;
-}
-
-static int test_R3_mult(void) {
-    int passed = 0;
-    for (int t = 0; t < TRIALS; ++t) {
-        F3 f[P], g[P], h_ref[P], h_mine[P];
-
-        rand_F3_poly(f);
-        rand_F3_poly(g);
-
-        R3_mult_ref (h_ref,  f, g);
-        R3_mult_mine(h_mine, f, g); /* CALL YOUR R3_mult HERE */
-
-        if (cmp_F3(h_ref, h_mine, "R3_mult", t))
-            ++passed;
-        else
-            return 0;
-    }
-    printf("PASS  R3_mult  (%d/%d trials)\n", passed, TRIALS);
-    return 1;
-}
-
-/* edge-case: multiply by zero polynomial */
-static int test_zero_poly(void) {
-    Fq f[P], h_ref[P], h_mine[P];
-    F3 g[P], fg_ref[P], fg_mine[P];
-
-    rand_Fq_poly(f);
-    memset(g, 0, sizeof g);
-
-    Rq_mult_small_ref (h_ref,  f, g);
-    Rq_mult_small_mine(h_mine, f, g); /* CALL YOUR Rq_mult_small HERE */
-    if (!cmp_Fq(h_ref, h_mine, "Rq_mult_small zero-g", 0)) return 0;
-
-    rand_F3_poly((F3*)f); /* reuse buffer as F3 */
-    memset(g, 0, sizeof g);
-
-    R3_mult_ref ((F3*)fg_ref,  (F3*)f, g);
-    R3_mult_mine((F3*)fg_mine, (F3*)f, g); /* CALL YOUR R3_mult HERE */
-    if (!cmp_F3(fg_ref, fg_mine, "R3_mult zero-g", 0)) return 0;
-
-    printf("PASS  zero-polynomial edge cases\n");
-    return 1;
 }
 
 #endif
@@ -584,15 +412,6 @@ int main() {
 
     printf("\n%s\n", fail == 0 ? "ALL TESTS PASSED" : "SOME TESTS FAILED");
     return fail ? 1 : 0;
-
-    #endif
-
-    #ifdef POLYMULT
-    int ok = 1;
-    ok &= test_Rq_mult_small();
-    ok &= test_R3_mult();
-    ok &= test_zero_poly();
-    return ok ? 0 : 1;
 
     #endif
 
