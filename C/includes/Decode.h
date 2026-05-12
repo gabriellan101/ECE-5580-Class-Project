@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include "Types.h"
 
-void Decode(const unsigned char *encoded, const uint16_t *M,long long len, uint16_t *decoded);
+void Decode(uint16_t *decoded, const unsigned char *encoded, const uint16_t *M, long long len);
 
 void Rq_decode(Fq *r,const unsigned char *s);
 

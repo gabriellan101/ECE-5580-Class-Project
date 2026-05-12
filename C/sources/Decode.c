@@ -13,7 +13,7 @@ Steps:
 */
 
 
-void Decode(const unsigned char *encoded, const uint16_t *M,long long len, uint16_t *decoded)
+void Decode(uint16_t *decoded, const unsigned char *encoded, const uint16_t *M, long long len)
 {
     // working buffer for decoded val
     //uint16_t R[len];

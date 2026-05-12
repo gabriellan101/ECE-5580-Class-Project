@@ -8,7 +8,7 @@ long long used for overflow safety
 Compute → c=rh+m (mod q)
 */
 
-void Encode( const uint16_t *R, const uint16_t *M, long long len, unsigned char *encoded)
+void Encode(unsigned char *encoded, const uint16_t *R, const uint16_t *M, long long len)
 {
     // Base case (length of message to encode is 1)
     if (len == 1) 
