@@ -20,20 +20,55 @@ int main() {
     int16_t finv[761];
     int rand[100];
 #if USE_REF
+    FILE * out_file = fopen("r_out.vals", "w");
+    fprintf(out_file, "Reference\n");
+
+
     printf("using ref\n");
     r_KeyGen(h,f,ginv);
 #else
-    clock_t start= clock();
+    FILE * out_file = fopen("i_out.vals", "w");
+    fprintf(out_file, "Implementation\n");
+
+
+
     KeyGen(h,f,ginv);
-    clock_t end = clock();
-    printf("%l\n", (end-start)/CLOCKS_PER_SEC);
+
 #endif
-/*
-    for(int i = 0; i < 100; i++) {
-        printf("%i\t", finv[i]);
+    fprintf(out_file, "g = ");
+    for(int i = 0; i < 761; i++) {
+        fprintf(out_file, "%02x", g[i]);
     }
-  */  
+    fprintf(out_file, "\n");
+
+    fprintf(out_file, "ginv = ");
+    for(int i = 0; i < 761; i++) {
+        fprintf(out_file, "%02x", ginv[i]);
+    }
+    fprintf(out_file, "\n");
+
+    fprintf(out_file, "f = ");
+    for(int i = 0; i < 761; i++) {
+        fprintf(out_file, "%02x", f[i]);
+    }
+    fprintf(out_file, "\n");
+
+    fprintf(out_file, "finv = ");
+    for(int i = 0; i < 761; i++) {
+        fprintf(out_file, "%04x", finv[i]);
+    }
+    fprintf(out_file, "\n");
+
+
+
+
+    fprintf(out_file, "h = ");
+    for(int i = 0; i < 761; i++) {
+        fprintf(out_file, "%04x", h[i]);
+    }
+    fprintf(out_file, "\n");
     printf("\ndone\n");
     return 0;
 }
+
 
