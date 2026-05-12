@@ -36,7 +36,7 @@ sk[1540 .. 1571]  → random seed  (rho)                  (implicit rejection)
 sk[1572 .. ?  ]  → Hash_prefix(pk)                      (cached hash)
 */
 void KEM_KeyGen(unsigned char *pk, unsigned char *sk) {
-  OuterKeyGen(sk, pk);
+  OuterKeyGen(pk, sk);
   sk += SK_bytes; // increment sk pointer to start of next segment
   memcpy(sk, pk, PK_bytes);
   sk += PK_bytes;

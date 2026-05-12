@@ -28,7 +28,7 @@ void OuterKeyGen(unsigned char *pk, unsigned char *sk);
 
 // The following function calls the above function in the NTRUPrime process and the outputs are used for encap and decap
 // It is a wrapper on top of OuterKeyGen() that intefaces with the hash functions
-void KEM_keygen(unsigned char *pk, unsigned char *sk);
+void KEM_KeyGen(unsigned char *pk, unsigned char *sk);
 
 void OuterEncrypt(unsigned char *CT, const F3 *r, const unsigned char *pk);
 
