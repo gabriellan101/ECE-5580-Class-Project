@@ -1,7 +1,5 @@
 #include "../includes/KAT_rng.h"
 #include "../includes/rng.h"
-#include "rng.c"
-
 
 uint32_t urandom32(void)
 {
