@@ -75,7 +75,7 @@ main()
         /**
          * Calculate Pk and Sk
          */
-        OuterKeyGen(pk,sk);
+        KEM_KeyGen(pk,sk);
 
         /**
          * Store Pk in file
@@ -96,7 +96,7 @@ main()
         fprintf(out_file, "\n");
   
 
-        OuterEncrypt(ct, ss, pk);
+        Encap(ct, ss, pk);
         
         fprintf(out_file, "ct = ");
         for(int c = 0; c< crypto_kem_CIPHERTEXTBYTES; c++) {
@@ -110,7 +110,7 @@ main()
         }
         fprintf(out_file, "\n\n");
 
-        OuterDecrypt(ss1, ct, sk);
+        Decap(ss1, ct, sk);
         
         if ( memcmp(ss, ss1, crypto_kem_BYTES) ) {
             fprintf(stderr, "crypto_kem_dec returned bad 'ss' value\n");
