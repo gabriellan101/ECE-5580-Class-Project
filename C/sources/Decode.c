@@ -12,7 +12,7 @@ Steps:
 3. repeat 
 */
 
-
+/*
 void Decode(uint16_t *decoded, const unsigned char *encoded, const uint16_t *M, long long len)
 {
     // working buffer for decoded val
@@ -48,6 +48,7 @@ void Decode(uint16_t *decoded, const unsigned char *encoded, const uint16_t *M, 
       2. expand 
       3. reduce prob
     */
+   /* COMMENT OUT HERE
     // more than one val pair to decode 
     while (numVal > 1) 
     {
@@ -162,7 +163,122 @@ void Decode(uint16_t *decoded, const unsigned char *encoded, const uint16_t *M, 
       // final encoded val
       decoded[i] = R[i];
     }
+}*/
+
+// from reference implementation, used for KAT
+void uint32_divmod_uint14(uint32_t *q,uint16_t *r,uint32_t x,uint16_t m)
+{
+  uint32_t v = 0x80000000;
+  uint32_t qpart;
+  uint32_t mask;
+
+  v /= m;
+
+  /* caller guarantees m > 0 */
+  /* caller guarantees m < 16384 */
+  /* vm <= 2^31 <= vm+m-1 */
+  /* xvm <= 2^31 x <= xvm+x(m-1) */
+
+  *q = 0;
+
+  qpart = (x*(uint64_t)v)>>31;
+  /* 2^31 qpart <= xv <= 2^31 qpart + 2^31-1 */
+  /* 2^31 qpart m <= xvm <= 2^31 qpart m + (2^31-1)m */
+  /* 2^31 qpart m <= 2^31 x <= 2^31 qpart m + (2^31-1)m + x(m-1) */
+  /* 0 <= 2^31 newx <= (2^31-1)m + x(m-1) */
+  /* 0 <= newx <= (1-1/2^31)m + x(m-1)/2^31 */
+  /* 0 <= newx <= (1-1/2^31)(2^14-1) + (2^32-1)((2^14-1)-1)/2^31 */
+
+  x -= qpart*m; *q += qpart;
+  /* x <= 49146 */
+
+  qpart = (x*(uint64_t)v)>>31;
+  /* 0 <= newx <= (1-1/2^31)m + x(m-1)/2^31 */
+  /* 0 <= newx <= m + 49146(2^14-1)/2^31 */
+  /* 0 <= newx <= m + 0.4 */
+  /* 0 <= newx <= m */
+
+  x -= qpart*m; *q += qpart;
+  /* x <= m */
+
+  x -= m; *q += 1;
+  mask = -(x>>31);
+  x += mask&(uint32_t)m; *q += mask;
+  /* x < m */
+
+  *r = x;
 }
+
+uint32_t uint32_div_uint14(uint32_t x,uint16_t m)
+{
+  uint32_t q;
+  uint16_t r;
+  uint32_divmod_uint14(&q,&r,x,m);
+  return q;
+}
+
+uint16_t uint32_mod_uint14(uint32_t x,uint16_t m)
+{
+  uint32_t q;
+  uint16_t r;
+  uint32_divmod_uint14(&q,&r,x,m);
+  return r;
+}
+
+
+void Decode(uint16_t *out,const unsigned char *S,const uint16_t *M,long long len)
+{
+  if (len == 1) {
+    if (M[0] == 1)
+      *out = 0;
+    else if (M[0] <= 256)
+      *out = uint32_mod_uint14(S[0],M[0]);
+    else
+      *out = uint32_mod_uint14(S[0]+(((uint16_t)S[1])<<8),M[0]);
+  }
+  if (len > 1) {
+    uint16_t R2[(len+1)/2];
+    uint16_t M2[(len+1)/2];
+    uint16_t bottomr[len/2];
+    uint32_t bottomt[len/2];
+    long long i;
+    for (i = 0;i < len-1;i += 2) {
+      uint32_t m = M[i]*(uint32_t) M[i+1];
+      if (m > 256*16383) {
+        bottomt[i/2] = 256*256;
+        bottomr[i/2] = S[0]+256*S[1];
+        S += 2;
+        M2[i/2] = (((m+255)>>8)+255)>>8;
+      } else if (m >= 16384) {
+        bottomt[i/2] = 256;
+        bottomr[i/2] = S[0];
+        S += 1;
+        M2[i/2] = (m+255)>>8;
+      } else {
+        bottomt[i/2] = 1;
+        bottomr[i/2] = 0;
+        M2[i/2] = m;
+      }
+    }
+    if (i < len)
+      M2[i/2] = M[i];
+    Decode(R2,S,M2,(len+1)/2);
+    for (i = 0;i < len-1;i += 2) {
+      uint32_t r = bottomr[i/2];
+      uint32_t r1;
+      uint16_t r0;
+      r += bottomt[i/2]*R2[i/2];
+      uint32_divmod_uint14(&r1,&r0,r,M[i]);
+      r1 = uint32_mod_uint14(r1,M[i+1]); /* only needed for invalid inputs */
+      *out++ = r0;
+      *out++ = r1;
+    }
+    if (i < len)
+      *out++ = R2[i/2];
+  }
+}
+
+
 
 void decodeRq(Fq *r,const unsigned char *s)
 {
