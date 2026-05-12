@@ -1,5 +1,6 @@
 
 #define USE_REF 0
+//gcc test_keygen.c sources/*.c -o test.exe -Iopenssl_files -Lopenssl_files -llibcrypto-3-x64
 
 
 #include "includes/rng.h"
@@ -9,6 +10,7 @@
 #include <stdio.h>
 #if !USE_REF
 #include "includes/NTRUPrime.h"
+#include <time.h>
 #endif
 typedef int8_t small;
 int main() {
@@ -21,14 +23,16 @@ int main() {
     printf("using ref\n");
     r_KeyGen(h,f,ginv);
 #else
-    printf("using impl\n");
+    clock_t start= clock();
     KeyGen(h,f,ginv);
+    clock_t end = clock();
+    printf("%l\n", (end-start)/CLOCKS_PER_SEC);
 #endif
-
+/*
     for(int i = 0; i < 100; i++) {
         printf("%i\t", finv[i]);
     }
-    
+  */  
     printf("\ndone\n");
     return 0;
 }
