@@ -9,7 +9,8 @@
 #endif
 #include <stdio.h>
 #if !USE_REF
-#include "includes/NTRUPrime.h"
+#include "../includes/NTRUPrime.h"
+#include "../sources/NTRUPrime.c"
 #include <time.h>
 #endif
 typedef int8_t small;
