@@ -1,0 +1,27 @@
+#ifndef POLY_MULT
+#define POLYMULT
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "Types.h"
+
+
+void polyMultHelper(int * f, int f_length, int * g, int g_length, int * h, int h_length);
+
+
+void polyMultHelperR3(F3 * f, int f_length, F3 * g, int g_length, F3 * h, int h_length);
+/**
+ * Reduces the polynomial degree by the given amount
+ * Assumes that reduction is happening inside a quotient ring with a quotient of x^d-x-1, where d is the degree
+ */
+void polyMultReduce(int * h, int h_length, int degree);
+
+void polyMultReduceR3(F3 * h, int h_length, int degree);
+
+void RqMult(int * f, int f_length, int * g, int g_length, int * h, int h_length);
+
+void R3Mult(F3 * f, int f_length, F3 * g, int g_length, F3 * h, int h_length);
+
+void keyGenMult(Fq *f, F3 *g, Fq * h);
+#endif
+
