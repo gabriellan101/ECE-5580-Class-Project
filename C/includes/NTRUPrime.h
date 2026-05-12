@@ -2,10 +2,15 @@
 #define NTRUPRIME_H
 
 #include "Types.h"
+#include "../sources/Types.c"
 #include "polyArith.h"
+#include "../sources/polyArith.c"
 #include "polyUtils.h"
+#include "../sources/polyUtils.c"
 #include "polyMult.h"
+#include "../sources/polyMult.c"
 #include "KAT_rng.h"
+#include "../sources/KAT_rng.c"
 
 /*
 This file defines functions used in the inner layer of the streamlined NTRUPrime core
