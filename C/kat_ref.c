@@ -50,32 +50,14 @@ main()
         if (!pk) abort();
         if (!sk) sk = malloc(crypto_kem_SECRETKEYBYTES);
         if (!sk) abort();
-        return 0;
+        //printf("cp1\n");
         randombytes_init(seed[i], NULL, 256);
-
-        fprintf(fp_rsp, "count = %d\n", i);
-        fprintBstr(fp_rsp, "seed = ", seed[i], 48);
         
-        if ( (ret_val = crypto_kem_keypair(pk, sk)) != 0) {
-            fprintf(stderr, "crypto_kem_keypair returned <%d>\n", ret_val);
-            return -1;
-        }
-        fprintBstr(fp_rsp, "pk = ", pk, crypto_kem_PUBLICKEYBYTES);
-        fprintBstr(fp_rsp, "sk = ", sk, crypto_kem_SECRETKEYBYTES);
+        OuterKeyGen(pk,sk);
         
-        if ( (ret_val = crypto_kem_enc(ct, ss, pk)) != 0) {
-            fprintf(stderr, "crypto_kem_enc returned <%d>\n", ret_val);
-            return -1;
-        }
-        fprintBstr(fp_rsp, "ct = ", ct, crypto_kem_CIPHERTEXTBYTES);
-        fprintBstr(fp_rsp, "ss = ", ss, crypto_kem_BYTES);
+        OuterEncrypt(ct, ss, pk);
         
-        fprintf(fp_rsp, "\n");
-        
-        if ( (ret_val = crypto_kem_dec(ss1, ct, sk)) != 0) {
-            fprintf(stderr, "crypto_kem_dec returned <%d>\n", ret_val);
-            return -1;
-        }
+        OuterDecrypt(ss1, ct, sk);
         
         if ( memcmp(ss, ss1, crypto_kem_BYTES) ) {
             fprintf(stderr, "crypto_kem_dec returned bad 'ss' value\n");
