@@ -71,6 +71,4 @@ void HashConfirm(unsigned char *h,const unsigned char *r,const unsigned char *pk
 /* k = HashSession(b,y,z) */
 void HashSession(unsigned char *k,int b,const unsigned char *y,const unsigned char *z);
 
-#include "../sources/OuterLayer.c"
-
 #endif

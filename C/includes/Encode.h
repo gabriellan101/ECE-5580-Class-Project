@@ -9,6 +9,4 @@ void encodeR3(unsigned char *s,const F3 *f);
 
 void encodeRq(unsigned char *s,const Fq *r);
 
-#include "../sources/Encode.c"
-
 #endif

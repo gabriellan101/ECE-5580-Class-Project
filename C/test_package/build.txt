@@ -1,1 +1,0 @@
-gcc test_rng.c rng.c -o test.exe -I"openssl_files" -L"openssl_files" -llibcrypto-3-x64
