@@ -53,7 +53,7 @@ void Encrypt(Fq *c, const F3 *r, const Fq *h) {
     3: Multiply past result by Ginv in R/3
     4: construct small polynomial 
 */
-void Decrypt(F3 *out, const Fq *c, const F3 *f, const F3 *ginv) {
+void Decrypt(F3 *out,  Fq *c,  F3 *f,  F3 *ginv) {
     Fq cf[P], cf3[P];
     F3 e[P], ev[P];
     int valid;

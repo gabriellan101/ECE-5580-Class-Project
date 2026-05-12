@@ -52,7 +52,7 @@ void RqMult(int * f, int f_length, int * g, int g_length, int * h, int h_length)
     }
 }
 
-void R3Mult(F3 * f, int f_length, F3 * g, int g_length, F3 * h, int h_length) {
+void R3Mult( F3 * f, int f_length, F3 * g, int g_length, F3 * h, int h_length) {
     F3 * h_temp = (F3*)malloc((f_length+g_length)*sizeof(int));
     polyMultHelperR3(f, f_length, g, g_length, h_temp, f_length+g_length);
     polyMultReduceR3(h_temp, f_length+g_length, 3);
@@ -63,7 +63,7 @@ void R3Mult(F3 * f, int f_length, F3 * g, int g_length, F3 * h, int h_length) {
 }
 
 
-void keyGenMult(Fq *f, F3 *g, Fq * h) {
+void keyGenMult(const Fq *f, const F3 *g, Fq * h) {
     Fq h_temp[2*P];
     for(int i = 0; i < 2*P-1; i++) {
         h_temp[i] = 0;

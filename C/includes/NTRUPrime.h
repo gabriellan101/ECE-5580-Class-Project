@@ -16,7 +16,7 @@ such as Encrypt(), which only consists of three lines, but the complexity comes 
 
 void KeyGen(Fq *h, F3 *f, F3 *ginv);
 void Encrypt(Fq *c, const F3 *r, const Fq *h);
-void Decrypt(F3 *out, const Fq *c, const F3 *f, const F3 *ginv);
+void Decrypt(F3 *out,  Fq *c,  F3 *f,  F3 *ginv);
 
 
 #endif
