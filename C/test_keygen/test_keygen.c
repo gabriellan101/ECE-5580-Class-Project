@@ -17,7 +17,7 @@ int main() {
     printf("start\n");
     Fq h[761];
     small f[761], g[761], ginv[761];
-    int16_t finv[761];
+    //int16_t finv[761];
     int rand[100];
 #if USE_REF
     FILE * out_file = fopen("r_out.vals", "w");
@@ -35,6 +35,8 @@ int main() {
     KeyGen(h,f,ginv);
 
 #endif
+
+
     fprintf(out_file, "g = ");
     for(int i = 0; i < 761; i++) {
         fprintf(out_file, "%02x", g[i]);
@@ -52,15 +54,6 @@ int main() {
         fprintf(out_file, "%02x", f[i]);
     }
     fprintf(out_file, "\n");
-
-    fprintf(out_file, "finv = ");
-    for(int i = 0; i < 761; i++) {
-        fprintf(out_file, "%04x", finv[i]);
-    }
-    fprintf(out_file, "\n");
-
-
-
 
     fprintf(out_file, "h = ");
     for(int i = 0; i < 761; i++) {

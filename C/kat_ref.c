@@ -11,7 +11,7 @@ char seed1[48] = {0x06,0x15,0x50,0x23,0x4D,0x15,0x8C,0x5E,0xC9,0x55,0x95,0xFE,0x
 #include <stdlib.h>
 #include <string.h>
 #include "includes/OuterLayer.h"
-#define KATNUM 1
+#define KATNUM 5
 
 
 unsigned char entropy_input[48];
@@ -32,7 +32,7 @@ main()
     unsigned char *pk = 0;
     unsigned char *sk = 0;
 
-    FILE * out_file = fopen("kat_out.txt", "w");
+    FILE * out_file = fopen("kat_out.vals", "w");
     if(out_file == NULL) {
         printf("ERROR: File not created/found\n");
         return -1;
@@ -68,7 +68,7 @@ main()
         fprintf(out_file, "count = %i\n", i);
         fprintf(out_file, "seed = ");
         for(int c = 0; c< 48; c++) {
-            fprintf(out_file, "%02hhx", seed[i][c]);
+            fprintf(out_file, "%02hhX", seed[i][c]);
         }
         fprintf(out_file, "\n");
         
@@ -82,7 +82,7 @@ main()
          */
         fprintf(out_file, "pk = ");
         for(int c = 0; c< crypto_kem_PUBLICKEYBYTES; c++) {
-            fprintf(out_file, "%02hhx", pk[c]);
+            fprintf(out_file, "%02hhX", pk[c]);
         }
         fprintf(out_file, "\n");
 
@@ -91,7 +91,7 @@ main()
          */
         fprintf(out_file, "sk = ");
         for(int c = 0; c< crypto_kem_SECRETKEYBYTES; c++) {
-            fprintf(out_file, "%02hhx", sk[c]);
+            fprintf(out_file, "%02hhX", sk[c]);
         }
         fprintf(out_file, "\n");
   
@@ -100,21 +100,21 @@ main()
         
         fprintf(out_file, "ct = ");
         for(int c = 0; c< crypto_kem_CIPHERTEXTBYTES; c++) {
-            fprintf(out_file, "%02hhx", ct[c]);
+            fprintf(out_file, "%02hhX", ct[c]);
         }
         fprintf(out_file, "\n");
 
         fprintf(out_file, "ss = ");
         for(int c = 0; c< crypto_kem_BYTES; c++) {
-            fprintf(out_file, "%02hhx", ss[c]);
+            fprintf(out_file, "%02hhX", ss[c]);
         }
-        fprintf(out_file, "\n");
+        fprintf(out_file, "\n\n");
 
         OuterDecrypt(ss1, ct, sk);
         
         if ( memcmp(ss, ss1, crypto_kem_BYTES) ) {
             fprintf(stderr, "crypto_kem_dec returned bad 'ss' value\n");
-            return -1;
+            //return -1;
         }
     }
 

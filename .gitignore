@@ -4,3 +4,5 @@
 *.ilk
 *.pdb
 *.o
+*.vals
+seed2array.c

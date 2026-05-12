@@ -20,8 +20,8 @@ void polyMultReduceR3(F3 * h, int h_length, int degree);
 
 void RqMult(int * f, int f_length, int * g, int g_length, int * h, int h_length);
 
-void R3Mult(F3 * f, int f_length, F3 * g, int g_length, F3 * h, int h_length);
+void R3Mult( F3 * f, int f_length, F3 * g, int g_length, F3 * h, int h_length);
 
-void keyGenMult(Fq *f, F3 *g, Fq * h);
+void keyGenMult(const Fq *f,const F3 *g, Fq * h);
 #endif
 
