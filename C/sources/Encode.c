@@ -100,7 +100,7 @@ void Encode(unsigned char *encoded, const uint16_t *R, const uint16_t *M, long l
 
 /* these are the only functions that rely on p mod 4 = 1 */
 
-static void encodeR3(unsigned char *s,const F3 *f)
+void encodeR3(unsigned char *s,const F3 *f)
 {
   F3 x;
   int i;
