@@ -9,6 +9,7 @@ Steps 2 and 3 represent "encode K as a string K' in the public key space"
 and "encode k as a string k' in the secret key space"
 The encode functions were not in the scope of the project and were copied from the reference implementation 
 for consistency between our implementation and the reference 
+DO NOT CALL DURING TESTING - THIS IS A WRAPPER FUNCTION
 */
 void OuterKeyGen(unsigned char *pk, unsigned char *sk){
   Fq h[P];
@@ -27,6 +28,8 @@ encodeR3(sk, ginv);
 
 
 /*
+USER INTERACTABLE FUNCTION CALLED DURING TESTING
+
 This function is a wrapper on OuterKeyGen that adds hash function usage - specifically hash prefix
 This function is also the one that gets called for real usage, it is a wrapper on OuterKeyGen
 Full secret key layout after this function:
