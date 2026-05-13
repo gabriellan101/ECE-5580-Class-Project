@@ -61,29 +61,47 @@ void R3Mult( F3 * f, int f_length, F3 * g, int g_length, F3 * h, int h_length) {
     }
     free(h_temp);
 }
-
-#define USE_BAS 1
-#define USE_REF (!USE_BAS)
+#define OPTIMIZED 1
+#if OPTIMIZED
 void keyGenMult(const Fq *f, const F3 *g, Fq * h) {
-#if USE_BAS
+    for(int i = 0; i < P; i++) {
+        h[i] = 0;
+    }
+    
+    for(int fi = 0; fi < P; fi++) {
+        for(int gi = 0; gi < P; gi++) {
+            if(gi+fi>=P) {
+                h[fi+gi-P] = Fq_mod(h[fi+gi-P]+f[fi]*g[gi]);
+                h[fi+gi-P+1] = Fq_mod(h[fi+gi-P+1]+f[fi]*g[gi]);
+            }
+            else
+                h[fi+gi] = Fq_mod(h[fi+gi]+f[fi]*g[gi]);
+        }
+    }
+}
+#else
+void keyGenMult(const Fq *f, const F3 *g, Fq * h) {
+    //Create an array of size 2*P and set it to zero
     Fq h_temp[2*P];
     for(int i = 0; i < 2*P-1; i++) {
         h_temp[i] = 0;
     }
     
+    //mult mod q every element of g with every element of f
     for(int fi = 0; fi < P; fi++) {
         for(int gi = 0; gi < P; gi++) {
             h_temp[fi+gi] = Fq_mod(h_temp[fi+gi]+f[fi]*g[gi]);
         }
     }
-
+    //do the reduction x^P = x + 1 for all degrees greater than P
     for(int i = P; i < 2*P-1; i++) {
         h_temp[i-P] = Fq_mod(h_temp[i-P] + h_temp[i]);
         h_temp[i-P+1] = Fq_mod(h_temp[i-P+1] + h_temp[i]);
     }
+
+    //set h to P
     for(int i = 0; i < P; i++) {
         h[i] = h_temp[i];
     }
-    #endif   
-
 }
+#endif
