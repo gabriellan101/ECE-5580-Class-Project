@@ -148,6 +148,8 @@ void Decap(unsigned char *k, const unsigned char *CT, const unsigned char *sk){
     if(matching == -1) r_prime[i] = rho[i];
   }
 
+  if(matching == -1) printf("Decapsulation failed, using rho for session key generation\n");
+
   HashSession(k, 1+matching, r_prime, CT);
 }
 
