@@ -11,7 +11,7 @@ char seed1[48] = {0x06,0x15,0x50,0x23,0x4D,0x15,0x8C,0x5E,0xC9,0x55,0x95,0xFE,0x
 #include <stdlib.h>
 #include <string.h>
 #include "includes/OuterLayer.h"
-#define KATNUM 5
+#define KATNUM 1
 
 
 unsigned char entropy_input[48];
@@ -109,7 +109,7 @@ main()
             fprintf(out_file, "%02hhX", ss[c]);
         }
         fprintf(out_file, "\n\n");
-
+      
         Decap(ss1, ct, sk);
         
         if ( memcmp(ss, ss1, crypto_kem_BYTES) ) {
