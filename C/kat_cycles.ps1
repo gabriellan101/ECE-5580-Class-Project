@@ -1,0 +1,6 @@
+#powershell -ExecutionPolicy Bypass -File kat.ps1
+clear
+gcc kat_ref_cycles.c sources/*.c -o test.exe -Iopenssl_files -Lopenssl_files -llibcrypto-3-x64
+echo compilation done
+echo running test.exe
+./test.exe
