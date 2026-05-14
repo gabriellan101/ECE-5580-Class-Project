@@ -153,7 +153,6 @@ void Encode(unsigned char *encoded, const uint16_t *R, const uint16_t *M, long l
     EncodeRecursive(encoded, R, M, len);
 }
 // }
-// encode function from the reference implementation
 
 /* 0 <= R[i] < M[i] < 16384 */
 // void Encode(unsigned char *out,const uint16_t *R,const uint16_t *M,long long len)
