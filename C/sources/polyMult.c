@@ -61,24 +61,86 @@ void R3Mult( F3 * f, int f_length, F3 * g, int g_length, F3 * h, int h_length) {
     }
     free(h_temp);
 }
+
 #define OPTIMIZED 1
 #if OPTIMIZED
-void keyGenMult(const Fq *f, const F3 *g, Fq * h) {
-    for(int i = 0; i < P; i++) {
-        h[i] = 0;
+
+
+#define R 65536
+#define q_1 49905
+#define q Q
+
+static inline int16_t shift(int32_t x) {
+    int32_t r = (x > (Q - adj)) ? (x + adj - Q) : (x + adj);
+    return (int16_t)(r - adj);
+}
+
+uint64_t toMont(uint64_t x) {
+    return (x * R) % Q;
+}
+
+uint64_t fromMont(uint64_t X_m) {
+    uint64_t m = ((X_m % R) * q_1) % R;
+    uint64_t C = (X_m + m * q) / R;
+    if (C >= q) C = C - q;
+    return shift(C);
+}
+
+uint64_t montMult(uint64_t A_m, uint64_t B_m) {
+    uint64_t T = A_m * B_m;
+    uint64_t m = ((T % R) * q_1) % R;
+    uint64_t C = (T + m * q) / R;
+    if (C >= q) C = C - q;
+    return C;
+}
+
+inline static uint64_t minusQ(uint64_t x) {
+    if(x>Q) {
+        return (x-Q);
     }
-    
+    return x;
+}
+
+void keyGenMult(const Fq *f, const F3 *g, Fq *h) {
+    //Initialize arrays for montgomery domain versions of arrays
+    uint64_t h_Mont[P] = {0};
+    uint64_t g_Mont[P];
+    uint64_t f_Mont[P];
+
+    //Convert into montegomery domain
+    for(int i = 0; i < P; i++) {
+        //Montegomery mult expects values from [0...Q-1]
+        if(f[i] < 0)
+            f_Mont[i] = toMont(f[i]+Q);
+        else
+            f_Mont[i] = toMont(f[i]);
+
+        if(g[i] < 0)
+            g_Mont[i] = toMont(g[i]+Q);
+        else
+            g_Mont[i] = toMont(g[i]);
+    }
+
+    //Convolute the two polynomials
     for(int fi = 0; fi < P; fi++) {
         for(int gi = 0; gi < P; gi++) {
-            if(gi+fi>=P) {
-                h[fi+gi-P] = Fq_mod(h[fi+gi-P]+f[fi]*g[gi]);
-                h[fi+gi-P+1] = Fq_mod(h[fi+gi-P+1]+f[fi]*g[gi]);
+            uint64_t prod = montMult(f_Mont[fi], g_Mont[gi]);
+            
+            if(gi + fi >= P) {
+                h_Mont[fi + gi - P] = minusQ(h_Mont[fi + gi - P] + prod);
+                h_Mont[fi + gi - P + 1] = minusQ(h_Mont[fi + gi - P + 1] + prod);
             }
-            else
-                h[fi+gi] = Fq_mod(h[fi+gi]+f[fi]*g[gi]);
+            else {
+                h_Mont[fi + gi] = minusQ(h_Mont[fi + gi] + prod);
+            }
         }
     }
+    //Covert back from Montegomry domain
+    for(int i = 0; i < P; i++) {
+        h[i] = (Fq)fromMont(h_Mont[i]);
+    }
 }
+
 #else
 void keyGenMult(const Fq *f, const F3 *g, Fq * h) {
     //Create an array of size 2*P and set it to zero
@@ -105,3 +167,22 @@ void keyGenMult(const Fq *f, const F3 *g, Fq * h) {
     }
 }
 #endif
+
+
+/*
+void keyGenMult(const Fq *f, const F3 *g, Fq * h) {
+    for(int i = 0; i < P; i++) {
+        h[i] = 0;
+    }
+
+    for(int fi = 0; fi < P; fi++) {
+        for(int gi = 0; gi < P; gi++) {
+            if(gi+fi>=P) {
+                h[fi+gi-P] = Fq_mod(h[fi+gi-P]+f[fi]*g[gi]);
+                h[fi+gi-P+1] = Fq_mod(h[fi+gi-P+1]+f[fi]*g[gi]);
+            }
+            else
+                h[fi+gi] = Fq_mod(h[fi+gi]+f[fi]*g[gi]);
+        }
+    }
+}*/
